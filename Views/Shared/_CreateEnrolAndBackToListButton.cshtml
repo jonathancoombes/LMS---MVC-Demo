@@ -1,0 +1,10 @@
+﻿@using LMS.Models.ViewModels
+@model ClassEnrolmentViewModel
+<div class="row">
+    <div class="col-6">
+        <input type="submit" class="btn btn-info form-control" value="Enrol" />
+    </div>
+    <div class="col-6">
+        <a asp-action="ClassEnrolmentList" asp-route-id="@Model.ClassEnrolment.ClassId" class="btn btn-success form-control">Back to List</a>
+    </div>
+</div>

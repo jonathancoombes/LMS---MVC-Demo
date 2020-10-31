@@ -1,0 +1,196 @@
+﻿@using LMS.Models.ViewModels
+@model CourseUnitViewModel
+@{
+    ViewData["Title"] = "CopySelectCourse";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="backgroundWhite">
+
+    <div class="col-12">
+
+        <h3>Step 1: Select Unit to Copy</h3>
+        <hr /><p>
+            Select the Unit from it's applicable Course and Module to copy from:
+        </p>
+        <br />
+        <form method="post" asp-action="InsertUnit" asp-controller="CourseUnit">
+            <input type="hidden" asp-for="@Model.CopyToCourseId" id="courseId" name="courseId"/>
+            <div class="form-group row col-9">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="col-2">
+                    @Html.DisplayNameFor(p => p.CourseList)
+                </div>
+                <div class="col-7">
+                    <select id="sourceCourseId" asp-for="@Model.CopyFromCourseId" name="sourceCourseId" asp-items="@Model.Courses" class="form-control"><option>Please select a course..</option></select>
+                </div>
+
+            </div>
+            <div id="Module" class="form-group row col-9" style="display:none">
+                <div class="col-2">
+                    <label asp-for="@Model.CopyFromModuleId" class="col-form-label"></label>
+                </div>
+                <div class="col-7">
+                    <select asp-for="@Model.CopyFromModuleId" name="sourceModuleId" id="sourceModuleId" asp-items="@( new SelectList(string.Empty, "Id", "Name"))" class="form-control"> </select>
+                </div>
+            </div>
+
+            <div id="Unit" class="form-group row col-9" style="display:none">
+                <div class="col-2">
+                    <label asp-for="@Model.CopyUnitId" class="col-form-label"></label>
+                </div>
+                <div class="col-7">
+                    <select asp-for="@Model.CopyUnitId" name="unitId" id="unitId" asp-items="@( new SelectList(string.Empty, "Id", "Name"))" class="form-control"> </select>
+                </div>
+            </div>
+
+            <div id="DestinationModule" class="DestinationModule" style="display:none">
+
+                <h3>Step 2: Select Destination Module</h3>
+                <hr /><p>
+                    Select the Destination Module where to insert the Unit:
+                </p><br />
+                <div class="form-group row col-9">
+                    <div class="col-2">
+                        <label asp-for="@Model.CopyToModuleId" class="col-form-label"></label>
+                    </div>
+                    <div class="col-7">
+                        <select asp-for="@Model.CopyToModuleId" name="destModuleId" id="destModuleId" asp-items="@( new SelectList(string.Empty, "Id", "Name"))" class="form-control"> </select>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <br />
+
+            <div class="row col-11 offset-2">
+
+                <div class="col-2">
+                    <a asp-action="UnitList" asp-controller="CourseUnit" asp-route-id="@Model.CopyToCourseId" class="btn btn-danger form-control">Cancel</a>
+                </div>
+                <div class="col-2">
+                    <input type="submit" class="btn btn-success form-control" value="Confirm Copy" />
+                </div>
+            </div>
+
+
+
+        </form>
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        getModules();
+        $('#DestinationModule').hide();
+        $('#Module').hide();
+        $('#Unit').hide();
+
+        $('#sourceCourseId').change(function () {
+            getModules();
+              $('#Unit').hide();
+            $('#Module').show();
+        });
+        $('#sourceModuleId').change(function () {
+            getUnits();
+            $('#Unit').show();
+        });
+         $('#unitId').change(function () {
+             $('#DestinationModule').show();getDestinationModules(); 
+         });
+        $('#unitId').ready(function () {         
+            
+        });
+    });
+
+
+    function getModules() {
+
+        var url = '@Url.Content("~/")' + "Course/CourseUnit/GetCourseModules";
+        var ddlsource = '#sourceCourseId';
+
+        $.getJSON(
+            url,
+            { id: $(ddlsource).val() },
+            function (data) {
+
+                 var items = "<option>" + "Select a module..." + "</option>";
+                $('#sourceModuleId').empty();
+                $.each(data, function (i, module) {
+                    items += "<option value='" + module.value + "'>" + module.text + "</option>";
+                });
+
+                $('#sourceModuleId').html(items);
+
+            });
+    }
+
+        
+    function getUnits() {
+
+        var url = '@Url.Content("~/")' + "Course/CourseUnit/GetCourseUnits";
+        var ddlsource2 = '#sourceModuleId';
+
+        $.getJSON(
+            url,
+            { id: $(ddlsource2).val() },
+            function (data) {
+
+                var items = "<option>" + "Select a unit..." + "</option>";
+                $('#unitId').empty();
+                $.each(data, function (i, module) {
+                    items += "<option value='" + module.value + "'>" + module.text + "</option>";
+                });
+
+                $('#unitId').html(items);
+
+            });
+    }
+
+
+            function getDestinationModules() {
+
+        var url = '@Url.Content("~/")' + "Course/CourseUnit/GetCourseModules";
+        var ddlsource = '#courseId';
+
+        $.getJSON(
+            url,
+            { id: $(ddlsource).val() },
+            function (data) {
+
+                 var items = "<option>" + "Select a module..." + "</option>";
+                $('#destModuleId').empty();
+                $.each(data, function (i, module) {
+                    items += "<option value='" + module.value + "'>" + module.text + "</option>";
+                });
+
+                $('#destModuleId').html(items);
+
+            });
+    }
+
+
+
+
+
+</script>
+
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}

@@ -1,0 +1,105 @@
+﻿@using static LMS.Extentions.OrderList
+@using LMS.Extentions
+@model LMS.Models.ViewModels.ClassViewModel
+@{
+    ViewData["Title"] = "ClassList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Class List</h2>
+        </div>
+        <div class="col-6 text-right">
+
+
+
+            <!--Renders a partial view-->
+            <partial name="_CreateClassButtonPartial" />
+
+        </div>
+    </div>
+
+    <br />
+    <div>
+        @if (Model.Classes.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tr class="table-secondary">
+                    <th style="width:28%">
+                        @Html.DisplayNameFor(m => m.Class.Name)
+                    </th>
+                    <th style="width:28%">
+                        @Html.DisplayNameFor(m => m.Class.Course)
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        @Html.DisplayNameFor(m => m.Class.StartDate)
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        @Html.DisplayNameFor(m => m.Class.EndDate)
+                    </th>
+                    <th style="width:3%; text-align:center">
+                        Enrolled
+                    </th>
+                    <th style="width:3%; text-align:center">
+                        Submission Dates
+                    </th>
+                    <th style="width:5%; text-align:center">Enrolment</th>
+
+                    <th style="width:4%; text-align:center">Actions</th>
+
+                </tr>
+                @foreach (var item in Model.Classes)
+                {
+            <tr>
+                <td>
+                    @DisplayLimit.StringLength(item.Name, 50)
+                </td>
+                <td>
+                    @DisplayLimit.StringLength(item.Course.Name, 60)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => item.StartDate)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => item.EndDate)
+                </td>
+                <td style="text-align:center">
+                    @if (item.EnrolIds != null && item.EnrolIds != "")
+                    {
+
+                        <P>@ItemIdOrder(item.EnrolIds).Count().ToString() </P>
+
+                    }
+                    else
+                    { <P>None</P>}
+                </td>
+                <td>
+                    <a asp-action="ClassUnitSubmission" asp-route-courseId="@item.CourseId" asp-route-classId="@item.Id" asp-controller="Class" class="btn btn-sm btn-success"><i class="fas fa-user-plus"></i> Dates</a>
+                </td>
+                <td>
+                    <a asp-action="ClassEnrolmentList" asp-route-id="@item.Id" asp-controller="ClassEnrolment" class="btn btn-sm btn-warning"><i class="fas fa-user-plus"></i> Enrolment</a>
+                </td>
+
+                <partial name="_ClassTableButtonPartial" model="item.Id" />
+
+            </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+            <h3>No Classes Exists</h3>
+        }
+    </div>
+
+</div>
+
+
+

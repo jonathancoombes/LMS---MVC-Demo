@@ -1,0 +1,116 @@
+﻿@model  LMS.LMSConfig.ConfigOptions
+@{
+    ViewData["Title"] = "ConfigOptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var selectList = new SelectList(
+        new List<SelectListItem>
+        {
+            new SelectListItem {Text = "Enabled", Value = "true"},
+            new SelectListItem {Text = "Disabled", Value = "false"},
+                }, "Value", "Text");
+}
+<br />
+
+<div class="border backgroundWhite row">
+    <h2 class="text-info">Learning Management System</h2>
+    <br />
+
+    <div class="col-12">
+        <hr />
+        <h4 class="text-black-50">Configuration Options</h4>
+        <p>Here you can set important configuration options for the LMS.</p>
+
+        <form method="post" asp-action="SetConfig" asp-controller="Config">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group row">
+
+                <div class="col-3">
+                    <label class="col-form-label">Company Name</label>
+                </div>
+
+                <div class="col-6">
+                    <input asp-for="@Model.CompanyName" name="company" required class="form-control" />
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-3">
+                    <label class="col-form-label">Minutes Per Question</label>
+                </div>
+
+                <div class="col-1">
+                    <input asp-for="@Model.MinutesPerQuest" name="quesMin" required class="form-control" />
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-3">
+                    <label class="col-form-label">Assessor Support Function</label>
+                </div>
+                <div class="col-2">
+                    <select id="assessorSupport" required  asp-for="@Model.AssessorCanSupport" name="assSup" asp-items="@selectList" class="form-control"></select>
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+                <div class="col-3">
+                    <label class="col-form-label">Facilitator Support Function</label>
+                </div>
+                <div class="col-2">
+                    <select id="facilitatorSupport"  required asp-for="@Model.FacilitatorCanSupport" name="facSup" asp-items="@selectList" class="form-control"></select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-3">
+                    <label class="col-form-label">Multiple Roles Per User</label>
+                </div>
+                <div class="col-2">
+                    <select id="multiRoles" required  asp-for="@Model.MultipleUserRolePerClassEnrol" name="multiRole" asp-items="@selectList" class="form-control"></select>
+                </div>
+
+            </div>
+
+            <div id="Custom" class="content Custom form-group row">
+
+                <div class="col-3">
+                    <label class="col-form-label">Course Complete Message</label>
+                </div>
+                <div class="col-6">
+                    <textarea asp-for="@Model.CompletedCourseMessage" name="courseCom" cols="80" rows="4"></textarea>
+
+                </div>
+                <span asp-validation-for="@Model.CompletedCourseMessage" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-2 offset-4">
+                    <input type="submit" class="btn btn-success form-control" value="Save" />
+                </div>
+                <div class="col-2">
+                    <a asp-action="Index" asp-controller="Home" asp-area="Learning" class="btn btn-danger form-control">Cancel</a>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+</div>
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+              
+}

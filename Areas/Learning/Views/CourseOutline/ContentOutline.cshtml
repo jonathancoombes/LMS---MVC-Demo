@@ -1,0 +1,205 @@
+﻿@using LMS.Extentions
+@using LMS.Utility
+@model LMS.Models.ViewModels.CourseUnitViewModel
+@{
+    ViewData["Title"] = "CourseOutline";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var itCounter = 0;
+    var rowClass = "";
+    var currentNotice = "";
+}
+<br />
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-10">
+            <h2 class="text-info" style="font-size: large">Course: @Model.Course.Name</h2>
+            <hr>
+            <h4 class="">Welcome to your Course Overview and Outline</h4>
+        </div>
+        <div class="col-2 text-right">
+            <a class="btn btn-sm btn-primary text-white" style="font-size:larger;" asp-controller="Home" asp-action="Classroom">
+                <i class="fas fa-chalkboard"></i> &nbsp; ENTER CLASSROOM
+            </a>
+
+        </div>
+    </div>
+
+    <div>
+        @if (Model.CourseUnitList.Count() > 0)
+        {
+        <table class="table table-responsive-sm" style="background:#425d78">
+
+            <tbody>
+
+
+                @foreach (var module in Model.CourseModuleList)
+                {
+
+                <thead>
+
+
+                    <tr class="table-light table-sm text-dark">
+                        <td style="font-weight:600; font-size: larger; border:none" colspan="7" cellpadding="2">
+                            Module: @Html.DisplayFor(m => module.Title)
+                        </td>
+                    </tr>
+
+                    <tr class="table-striped text-light table-sm">
+
+                        <th style="font-weight:400;padding-left:10px;" width="56%">@Html.DisplayNameFor(m => m.CourseUnitList)</th>
+
+                        <th style="text-align:center; font-weight:400; width:15%">Topics</th>
+                        <th style="text-align:center; font-weight:400;width:14%">Formative</th>
+                        <th style="text-align:center; font-weight:400;width:20%">Summative</th>
+                        <th style="text-align:center; font-weight:400;width:20%">Status</th>
+
+                    </tr>
+                </thead>
+                @if (module.CourseUnitOrder != null && module.CourseUnitOrder != "")
+                {
+                    @foreach (var unit in Model.CourseUnitList)
+                    {
+
+
+                        @if ((unit.CourseTopicIds != null && unit.CourseTopicIds != "") &&
+                       (OrderList.ItemIdOrder(unit.CourseTopicIds).Contains(Model.ClassEnrol.CurrentTopicId.GetValueOrDefault())))
+                        { rowClass = "table-primary"; currentNotice = "(Classroom)";}
+                        else { rowClass = "table-light"; currentNotice = ""; }
+
+        <tr class="@rowClass table table-sm">
+
+            @if (OrderList.ItemIdOrder(module.CourseUnitOrder).Contains(unit.Id))
+            {
+                itCounter++;
+                <td class="text-dark" style="margin:0; border:#e2e1e1 1px solid">
+                    @{
+                        if (unit.Name.Length < 55)
+                        {
+                            var result = itCounter.ToString() + ". " + unit.Name;
+                            @result;
+                        }
+                        else if (unit.Name.Length > 55)
+                        {
+                            var unitTitle = itCounter.ToString() + ". " + unit.Name.Substring(0, 55) + "....";
+                            @unitTitle;
+                        }
+                    }
+                    @currentNotice
+                </td>
+                @if (unit.CourseTopicIds == null || unit.CourseTopicIds == "")
+                {
+                    <td style="text-align:center;margin:0; color:#808080; border:#e2e1e1 1px solid">
+                        No Topics
+                    </td>
+                    <td style="text-align:center;margin:0; color:#808080; border:#e2e1e1 1px solid">
+                        No Formative
+                    </td>
+                }
+                else
+                {
+                    <td style="text-align:center;margin:0; border:#e2e1e1 1px solid">
+
+                        <div class="btn-group" role="group">
+
+                            <a class="btn btn-sm btn-success text-white" asp-controller="CourseOutline" asp-action="TopicListOutline" asp-route-Id="@unit.Id">
+                                <i class="far fa-list-alt"></i> &nbsp; VIEW TOPICS
+                            </a>
+                        </div>
+
+                    </td>
+                    <td style="text-align:center;margin:0; border:#e2e1e1 1px solid">
+                        <a class="btn btn-sm btn-FA text-white" asp-controller="CourseOutline" asp-action="TopicListOutline" asp-route-Id="@unit.Id">
+                            <i class="far fa-list-alt"></i> &nbsp; FORMATIVE
+                        </a>
+                    </td>
+                }
+                if (unit.SAOrder != null && unit.SAOrder != "")
+                {
+                    <td style="text-align:center;margin:0; border:#e2e1e1 1px solid">
+                        <a class="btn btn-sm btn-SA text-white" asp-controller="SummativeSession" asp-action="ViewAllSummative" asp-route-Id="@unit.Id">
+                            <i class="far fa-list-alt"></i> &nbsp; SUMMATIVE
+                        </a>
+                    </td>
+                }
+                else
+                {
+                    <td style="text-align:center;margin:0; color:#808080; border:#e2e1e1 1px solid">
+
+                        No Summative
+
+                    </td>
+
+                }
+
+                // If Topics / FA / SA Complete
+                if ((Model.ClassEnrol.CompletedUnits != null && Model.ClassEnrol.CompletedUnits != "")
+                            && OrderList.ItemIdOrder(Model.ClassEnrol.CompletedUnits).Contains(unit.Id)
+                                && Model.ClassEnrol.CompletedTopics == SD.AllComplete)
+                {
+                    if (Model.SummSubs.Count > 0 && unit.SAOrder != null && unit.SAOrder != "")
+                    {
+                        var sess = Model.SummSubs.SingleOrDefault(p => p.UnitId == unit.Id);
+
+                        if (sess != null && (OrderList.ItemIdOrder(sess.SASubmissionInOrder).Count() > 0 && OrderList.ItemIdOrder(sess.SASubmissionInOrder).Count() == OrderList.ItemIdOrder(sess.SAIdsInOrder).Count()))
+                        {
+
+                            <td style="text-align:center; background:#50a349; font-size:x-large; padding:0">
+                                <i class="far fa-check-circle text-light"></i>
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="text-align:center; background:#e66408; font-size:x-large; padding:0">
+
+                                <i class="far fa-times-circle text-light"></i>
+                            </td>
+                        }
+
+                    }
+                    else
+                    {
+
+                        <td style="text-align:center; background:#50a349; font-size:x-large; padding:0">
+                            <i class="far fa-check-circle text-light"></i>
+                        </td>
+
+                    }
+                }
+
+                else if ((Model.ClassEnrol.CompletedFas == SD.AllComplete) && (unit.SAOrder == null || unit.SAOrder == ""))
+                {
+
+                    <td style="text-align:center; background:#50a349; font-size:x-large; padding:0">
+
+
+                        <i class="far fa-check-circle text-light"></i>
+                    </td>
+                }
+                else
+                {
+                    <td style="text-align:center; background:#e66408; font-size:x-large; padding:0">
+
+                        <i class="far fa-times-circle text-light"></i>
+                    </td>
+                }
+
+
+
+
+            }
+        </tr>
+                    }}
+            }
+            </table>
+            }
+            else
+            {
+                <p class="text-black-50">No Units Exists</p>
+            }
+    </div>
+
+</div>
+

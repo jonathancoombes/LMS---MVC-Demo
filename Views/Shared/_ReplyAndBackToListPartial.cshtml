@@ -1,0 +1,13 @@
+﻿@using LMS.Models.ViewModels
+@model SupportViewModel
+
+<div class="row">
+    <div class="col-6">
+
+        <input type="submit" class="btn btn-success form-control" value="Submit" />
+
+    </div>
+    <div class="col-6">
+        <a asp-action="SupportRequestList" asp-route-id="@Model.SupportRequest.ClassId" class="btn btn-info form-control">Cancel</a>
+    </div>
+</div>

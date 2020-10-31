@@ -1,0 +1,112 @@
+﻿@using static LMS.Extentions.OrderList
+@model LMS.Models.ViewModels.SummativeViewModel
+@{
+    ViewData["Title"] = "SummativeList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Unit Summative List</h2>
+            <br />
+
+        </div>
+        <div class="col-6 text-right">
+            @if (Model.CanDelete)
+            {
+                <!--Renders a partial view-->
+                <partial name="_CreateUnitSAButtonPartial" model="Model.CourseUnit.Id" />
+            }
+            </div>
+
+    </div>
+
+    <br />
+    <div>
+        @if (Model.SummativeList.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tbody>
+
+                <thead>
+                    <tr class="table-warning table-sm">
+                        <td colspan="6" cellpadding="4">
+                            Unit: @Model.CourseUnit.Name
+                        </td>
+                    </tr>
+                    <tr class="table-striped">
+
+                        <th style="width:70%">@Html.DisplayNameFor(m => m.SummativeList)</th>
+
+                        <th>@Html.DisplayNameFor(m => m.Summative.Reference)</th>
+                        <th style="width:16%; text-align: center">@Html.DisplayNameFor(m => m.Summative.AssessmentType)</th>
+                        <th></th>
+                        <th>Actions</th>
+                        <th>Position</th>
+
+                    </tr>
+                </thead>
+                @foreach (var summative in Model.SummativeList)
+                {
+
+                    <tr class="table-striped">
+
+                        <td>
+                            @Html.DisplayFor(m => summative.Title)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(m => summative.Reference)
+                        </td>
+                        <td style="text-align: center">
+                            @Html.DisplayFor(m => summative.AssessmentType)
+                        </td>
+                        <td>
+                            @if (Model.CanDelete)
+                            {
+                                <partial name="_CanDeleteTableButtonPartial" model="summative.Id" />
+
+                            }
+                            else
+                            {
+                                <partial name="_CantDeleteTableButtonPartial" model="summative.Id" />
+
+                            }
+                        </td>
+
+                        <td style="width:150px">
+                            @if (Model.CanDelete == true)
+                            {
+                                <div class="btn-group" role="group">
+
+                                    <a class="btn btn-sm btn-primary text-white" asp-action="MoveSAUp" asp-route-Id="@summative.Id">
+                                        <i class="fas fa-chevron-up"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-danger text-white" asp-action="MoveSADown" asp-route-Id="@summative.Id">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </a>
+                                </div>}
+                            else
+                            {
+                                <p>FIXED</p>
+                            }
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+            <p class="text-black-50">No Summative Exists</p>
+        }
+    </div>
+
+</div>
+

@@ -1,0 +1,127 @@
+﻿@using LMS.Utility
+@model LMS.Models.ViewModels.CourseUnitTopicViewModel
+@{
+    ViewData["Title"] = "TopicList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Unit Topic List</h2>
+            <br />
+
+        </div>
+        <div class="col-6 text-right">
+            @if(Model.CanDelete)
+            {
+                <!--Renders a partial view-->
+                <partial name="_CreateTopicButtonPartial" model="Model.CourseUnit.Id" />
+            }
+            </div>
+
+    </div>
+
+    <br />
+    <div>
+        @if (Model.CourseTopicList.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tbody>
+
+                <thead>
+                    <tr class="table-primary table-sm">
+                        <td colspan="7" cellpadding="4">
+                            Unit: @Model.CourseUnit.Name
+                        </td>
+                    </tr>
+                    <tr class="table-striped">
+
+                        <th style="width:70%">@Html.DisplayNameFor(m => m.CourseTopicList)</th>
+                        <th>@Html.DisplayNameFor(m => m.CourseTopic.Reference)</th>
+                        <th style="width:10%; text-align:center">Type</th>
+
+                        <th>Actions</th>
+                        <th>Position</th>
+                        <th style="text-align:center">Formative</th>
+                    </tr>
+                </thead>
+                @foreach (var topic in Model.CourseTopicList)
+                {
+
+            <tr class="table-striped">
+
+                <td>
+                    @Html.DisplayFor(m => topic.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => topic.Reference)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => topic.ContentType)
+                </td>
+
+                @if ((Model.CanDelete == true) && (topic.FAOrder == null || topic.FAOrder == ""))
+                {
+                    <partial name="_CanDeleteTableButtonPartial" model="topic.Id" />
+
+                }
+                else
+                {
+                    <partial name="_CantDeleteTableButtonPartial" model="topic.Id" />
+
+                }
+
+
+            <td style="width:150px; text-align:center">
+                @if (Model.CanDelete == true)
+                {
+                    <div class="btn-group" role="group">
+
+                        <a class="btn btn-sm btn-primary text-white" asp-action="MoveTopicUp" asp-route-Id="@topic.Id">
+                            <i class="fas fa-chevron-up"></i>
+                        </a>
+                        <a class="btn btn-sm btn-danger text-white" asp-action="MoveTopicDown" asp-route-Id="@topic.Id">
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                    </div>}
+                else {
+            <p>FIXED</p>
+                }
+                </td>
+
+                <td style="width:15%">
+
+                    <div class="btn-group" role="group">
+
+                        <a class="btn btn-sm btn-FA text-white" asp-controller="Formative" asp-action="FormativeList" asp-route-Id="@topic.Id">
+                            <i class="fab fa-buffer"></i> &nbsp; FORMATIVE
+                        </a>
+
+
+                    </div>
+                </td>
+            </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+            <p class="text-black-50">No Topics Exists</p>
+        }
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+
+
+}

@@ -1,0 +1,134 @@
+﻿@using LMS.Extentions
+@using LMS.Utility
+@using LMS.Models.ViewModels
+@model AssessmentViewModel
+@{
+    ViewData["Title"] = "EditGradeDirect";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var result = "";
+    var counter = 0;
+}
+
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6" style="padding-bottom:10px">
+            <h2 class="text-info">Grading Question Submissions</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 ">
+
+            <table style="opacity: 1" class="table table-sm table-striped table-responsive-sm">
+                <thead>
+                    <tr class="table-secondary table-sm text-dark table-responsive-sm text-center" style="box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1), 0 0px 0px 0 rgba(0, 0, 0, 0.19);">
+                        <th style="font-weight:600;color:lightslategray">
+                            Name
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Surname
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Identity
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Course
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Class
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center">
+                        <td>
+                            @Model.FirstName
+                        </td>
+                        <td>
+                            @Model.LastName
+                        </td>
+                        <td>
+                            @Model.IdNumber
+                        </td>
+
+                        <td>
+                            @Model.ClassEnrolment.Class.Course.Name
+                        </td>
+                        <td>
+                            @Model.ClassEnrolment.Class.Name
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+      
+
+    </div>
+
+
+
+    <div>
+        @if (Model.SubmissionList.Count() > 0)
+        {
+
+            <form method="post" asp-action="SaveGradeDirect" name="SaveGradeDirect" asp-controller="Assessment">
+
+            <p class="bg-dark text-light">Unit: @Model.UnitTitle</p>
+            <table class="table table-striped  table-bordered table-responsive-sm">
+
+
+
+                @foreach (var item in Model.SubmissionList)
+                {
+                    counter++;
+
+                    <tr style="@result;" class="table-sm table-responsive-sm">
+                        <td span colspan="3" style="text-align:left; padding:10px;  background:#fcfcfc;font-weight:600">
+                            Question @counter.  @Html.DisplayFor(m => item.Summative.DirectQuestion.Question)
+                        </td>
+
+
+                    </tr>
+                    <tr class="table-sm">
+                        <th style="width:42%;text-align:center;font-weight:600">
+                            Answer Guide
+                        </th>
+                        <th style="width:42%; text-align:center;font-weight:600">
+                            Answer Submitted
+                        </th>
+                        <th style="width:8%; text-align:center;font-weight:600">
+                            Grade
+                        </th>
+                    </tr>
+                    <tbody>
+                        <tr class="table-responsive-sm">
+                            <td style="text-align:left">
+                                @Html.DisplayFor(m => item.Summative.DirectQuestion.AnswerGuide)
+                            </td>
+                            <td style="text-align:left; background:#fcfcfc">
+                                @Html.DisplayFor(m => item.DirectAnswer)
+                            </td>
+                            <td style="text-align:center">
+                                <input type="text" asp-for="@item.GradePercentage" name="@item.Id" id="@item.Id"  style="margin-bottom:5px" class="form-control" />
+                                @*<input asp-for="@Model.SummativeSubmission.Id" value="@item.Id" type="hidden" name="Id" />*@
+                                <button type="submit" asp-action="SaveGradeDirect" asp-controller="Assessment" asp-route-subId="@item.Id" asp-route-learnerId="@item.UserId" class="btn btn-sm btn-danger text-white text-center"><i class="fas fa-edit"></i>&nbsp; Apply</button>
+                          
+                            </td>
+
+                        </tr>
+                    </tbody>
+                }
+
+            </table>
+            </form> }
+        else
+        {
+            <h3 class="text-sm-left">There's no Direct Question Submissions available at this stage.</h3>
+        }
+    </div>
+
+</div>

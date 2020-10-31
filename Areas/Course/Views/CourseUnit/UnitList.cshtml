@@ -1,0 +1,125 @@
+﻿@using static LMS.Extentions.OrderList
+@model LMS.Models.ViewModels.CourseUnitViewModel
+@{
+    ViewData["Title"] = "UnitList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var itCounter = 0;
+
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+    
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">@Model.Course.Name</h2>            
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="btn-group col-6 offset-6" style="max-height:60px; min-width:140px;">
+
+            <a asp-action="ModuleList" asp-route-id="@Model.Course.Id" asp-controller="CourseModule" class="btn btn-info form-control"><i class="fas fa-align-justify"></i> &nbsp; Edit Modules</a>
+            <a asp-action="CopySelectCourse" asp-route-sourceCourseId="@Model.Course.Id" asp-controller="CourseUnit" class="btn btn-secondary form-control"><i class="fas fa-plus"></i> &nbsp; Copy Unit</a>
+            <a asp-action="Create" asp-route-id="@Model.Course.Id" asp-controller="CourseUnit" class="btn btn-primary form-control"><i class="fas fa-plus"></i> &nbsp; New Unit</a>
+
+        </div>
+    </div><h4 class="text-info text-black-50">Course Units</h4>
+   
+    <div>
+        @if (Model.CourseUnitList.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tbody>
+
+
+                    @foreach (var module in Model.CourseModuleList)
+                    {
+                    <thead>
+
+                        <tr class="table-info table-bordered text-dark table-sm">
+                            <td colspan="7" cellpadding="2">
+                                Module: @Html.DisplayFor(m => module.Title)
+                            </td>
+                        </tr>
+                        <tr class="table-striped">
+
+                            <th width="56%">@Html.DisplayNameFor(m => m.CourseUnitList)</th>
+
+                            <th></th>
+
+                            <th style="text-align:center">Actions</th>
+                            <th style="text-align:center">Position</th>
+                            <th style="text-align:center; width:13%">Topics</th>
+                            <th style="text-align:center; width:15%">Formative</th>
+                            <th style="text-align:center; width:16%">Summative</th>
+                        </tr>
+                    </thead>
+                    @if (module.CourseUnitOrder != null && module.CourseUnitOrder != "")
+                    {
+                    @foreach (var unit in Model.CourseUnitList)
+                    {
+
+            <tr class="table-striped">
+                @if (ItemIdOrder(module.CourseUnitOrder).Contains(unit.Id))
+                {itCounter++;
+                <td>
+                    @{
+                        if (unit.Name.Length < 55)
+                        {
+                            var result = itCounter.ToString() + ". " + unit.Name;
+                            @result;
+                        }
+                        else if (unit.Name.Length > 55)
+                        {
+                            var unitTitle = itCounter.ToString() + ". " + unit.Name.Substring(0, 55) + "....";
+                            @unitTitle;
+                        }
+                    }
+
+                </td>
+                    @if (unit.CourseTopicIds == null || unit.CourseTopicIds == "")
+                    {
+                        <td>
+                            <partial name="_CanDeleteTableButtonPartial" model="unit.Id" />
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <partial name="_CantDeleteTableButtonPartial" model="unit.Id" />
+                        </td>
+
+                    }
+                    <td style="width:150px">
+
+                        <div class="btn-group" role="group">
+
+                            <a class="btn btn-sm btn-primary text-white" asp-action="MoveUnitUp" asp-route-Id="@unit.Id">
+                                <i class="fas fa-chevron-up"></i>
+                            </a>
+                            <a class="btn btn-sm btn-dark text-white" asp-action="MoveUnitDown" asp-route-Id="@unit.Id">
+                                <i class="fas fa-chevron-down"></i>
+                            </a>
+                        </div>
+                    </td>
+                    <partial name="_TopicsTableButtonPartial" model="unit.Id" />
+
+                    <partial name="_FAUnitTableButtonPartial" model="unit.Id" />
+                    <partial name="_SAUnitTableButtonPartial" model="unit.Id" />
+                            }
+            </tr>
+                            }}
+                }
+                </table>
+            }
+            else
+            {
+                <p class="text-black-50">No Units Exists</p>
+            }
+    </div>
+
+</div>
+

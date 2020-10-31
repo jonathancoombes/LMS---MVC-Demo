@@ -1,0 +1,349 @@
+﻿@using LMS.Utility
+
+@model LMS.Models.ViewModels.SummativeViewModel
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-info">Edit Summative</h2>
+<br />
+<div class="border backgroundWhite row">
+
+    <div class="col-12">
+
+        <h4 class="text-black-40">Editing Summative for Unit: @Model.CourseUnit.Name</h4>
+        <br />
+        <form method="post" asp-action="Edit" enctype="multipart/form-data">
+
+            <input type="hidden" asp-for="@Model.CourseUnit.Id" id="unitId" />
+            <input type="hidden" asp-for="@Model.Summative.Id" id="Id" />
+            <input type="hidden" asp-for="@Model.Summative.AssessmentType" id="assessType" />
+            <input type="hidden" asp-for="@Model.CourseUnit.SAOrder" id="saOrder" />
+
+
+            <!--To Jquery-->
+            <input type="hidden" value="@Model.CourseUnit.Id" id="unitId" name="unitId" />
+            <input type="hidden" value="@Model.Summative.AssessmentType" id="assessType" name="assessType" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Summative.Title" class="col-form-label"></label>
+                </div>
+
+                <div class="col-6">
+                    <input asp-for="@Model.Summative.Title" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Summative.Reference" class="col-form-label"></label>
+                </div>
+                <div class="col-3">
+                    <input asp-for="@Model.Summative.Reference" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="Summative.AssessmentType" class="col-form-label"></label>
+                </div>
+
+                <div class="col-3">
+
+                    <select id="ddlContentType" disabled asp-for="Summative.AssessmentType" asp-items="@(new SelectList(Model.AssessmentType))" class="form-control"></select>
+                </div>
+
+            </div>
+            @if (Model.Summative.AssessmentType == SD.MultipleChoice)
+            {
+                <div id="Multiple-Choice" class="content form-group row" style="text-align:center">
+                    <div class="col-2" style="text-align:left">
+                        @Html.Label("Question")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <P>Record the Multiple Choice Question Below:</P>
+                        @Html.TextAreaFor(m => m.Summative.MultipleChoice.Question, htmlAttributes: new { id = "texta", cols = "80", rows="5" })
+                    </div>
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                    <div class="col-2" style="padding-left:15px;padding-right:15px">
+                        @Html.Label("Answer Options:") <hr style="height: 2px;border: 0;width:92%;box-shadow: 2px 3px 3px -3px #bababa inset;">
+                    </div>
+                    <div class="col-8" style="padding-left:55px;padding-right:55px">
+                        @Html.Label("Record the possible answer choices below for the question above:")<hr style="height: 2px;border: 0;width:100%;box-shadow: 2px 3px 3px -3px #bababa inset;">
+                    </div>
+                    <div class="col-2" style="padding-left:15px;padding-right:15px;">
+                        @Html.Label("Correct Answer:")<hr style="height: 2px;border: 0;width:92%;box-shadow: 2px 3px 3px -3px #bababa inset;">
+                    </div>
+                    <div class="col-2">
+                        @Html.Label("Answer Option " + SD.AnswerOptionA)
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="@Model.Summative.MultipleChoice.AnswerA" class="form-control" />
+                    </div>
+                    <div class="col-2">
+                        @Html.RadioButtonFor(model => model.Summative.MultipleChoice.CorrectAnswer, SD.AnswerOptionA) Correct<br />
+                    </div>
+                    <br /><br />
+                    <div class="col-2">
+                        @Html.Label("Answer Option " + SD.AnswerOptionB)
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="@Model.Summative.MultipleChoice.AnswerB" class="form-control" />
+                    </div>
+                    <div class="col-2">
+                        @Html.RadioButtonFor(model => model.Summative.MultipleChoice.CorrectAnswer, SD.AnswerOptionB) Correct<br />
+                    </div>
+                    <br /><br />
+                    <div class="col-2">
+                        @Html.Label("Answer Option " + SD.AnswerOptionC)
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="@Model.Summative.MultipleChoice.AnswerC" class="form-control" />
+                    </div>
+                    <div class="col-2">
+                        @Html.RadioButtonFor(model => model.Summative.MultipleChoice.CorrectAnswer, SD.AnswerOptionC) Correct<br />
+                    </div>
+                    <br /><br />
+                    <div class="col-2">
+                        @Html.Label("Answer Option " + SD.AnswerOptionD)
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="@Model.Summative.MultipleChoice.AnswerD" class="form-control" />
+                    </div>
+                    <div class="col-2">
+                        @Html.RadioButtonFor(model => model.Summative.MultipleChoice.CorrectAnswer, SD.AnswerOptionD) Correct<br />
+                    </div>
+                    <span asp-validation-for="Summative.MultipleChoice" class="text-danger"></span>
+                    <input type="hidden" asp-for="@Model.Summative.MultipleChoice.Id" />
+                </div>
+            }
+            else if (Model.Summative.AssessmentType == SD.TrueFalse)
+            {
+                <div id="TrueFalse" class="content form-group row" style="text-align:center">
+
+                    <div class="col-2" style="text-align:left">
+                        @Html.Label("Question")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+
+                        <P>Record the True or False Question Below:</P>
+                        @Html.TextAreaFor(m => m.Summative.TrueFalse.Question, htmlAttributes: new { id = "texta2",  cols = "80", rows="5" })
+                    </div>
+
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+
+                    <div class="col-2" style="padding-left:15px;padding-right:15px">
+
+                        @Html.Label("Correct Answer")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <div class="col-5">
+                            @Html.RadioButtonFor(model => model.Summative.TrueFalse.CorrectAnswer, SD.AnswerOptionTrue) True
+                        </div>
+                        <div class="col-5">
+                            @Html.RadioButtonFor(model => model.Summative.TrueFalse.CorrectAnswer, SD.AnswerOptionFalse) False<br />
+                        </div>
+                    </div>
+                    <br /><br />
+                    <span asp-validation-for="Summative.TrueFalse" class="text-danger"></span>
+                    <input type="hidden" asp-for="@Model.Summative.TrueFalse.Id" />
+                </div>
+            }
+            @if (Model.Summative.AssessmentType == SD.DirectQuestion)
+            {
+                <div id="Question" class="content form-group row" style="text-align:left">
+                    <div class="col-2" style="text-align:left">
+                        @Html.Label("Question")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <P>Record the Question Below:</P>
+                        @Html.TextAreaFor(m => m.Summative.DirectQuestion.Question, htmlAttributes: new { id = "texta3", cols = "80", rows="5" })
+                    </div>
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                    <div class="col-2" style="padding-left:15px;padding-right:15px">
+                        @Html.Label("Correct Answer")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <P>Record the Answer Guide Below:</P>
+                        @Html.TextAreaFor(m => m.Summative.DirectQuestion.AnswerGuide, htmlAttributes: new { cols = "100", rows = "5" })
+                    </div>
+                    <br /><br />
+                    <span asp-validation-for="Summative.DirectQuestion" class="text-danger"></span>
+                    <input type="hidden" asp-for="@Model.Summative.DirectQuestion.Id" />
+                </div>
+            }
+            else if (Model.Summative.AssessmentType == SD.Assignment)
+            {
+                <div id="Assignment" class="content form-group row">
+                    <div class="col-2" style="padding-left:15px;padding-right:15px">
+                        @Html.Label("Description")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <P>Provide a detailed description of the Assignment below:</P>
+                        @Html.TextAreaFor(m => m.Summative.Assignment.Description, htmlAttributes: new { cols = "100", rows = "5" })
+                    </div>
+                    <br /><br />
+                    <span asp-validation-for="Summative.Assignment.Description" class="text-danger"></span>
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+
+                    <div class="col-2" style="padding-left:15px;padding-right:15px">
+                        @Html.Label("Requirements")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <P>Describe the Assignment Submission requirements below:</P>
+                        @Html.TextAreaFor(m => m.Summative.Assignment.SubmissionRequirements, htmlAttributes: new { cols = "100", rows = "5" })
+                    </div>
+                    <br /><br />
+                    <span asp-validation-for="Summative.Assignment.SubmissionRequirements" class="text-danger"></span>
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                    <div class="col-2">
+                        <label asp-for="Summative.Assignment" class="col-form-label"></label>
+                    </div>
+                    <div class="col-5">
+                        <input type="file" name="assignmentfiles" accept="application/pdf" class="form-control border-0" />
+                    </div>
+                    <span asp-validation-for="Summative.Assignment.AssignmentRequest" class="text-danger"></span>
+                    <br /><br />
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                    <div class="col-2">
+                        <P> File Preview</P>
+                    </div>
+                    <div class="col-8" style="position:relative">
+                        <canvas style="border:1px solid #bababa; padding: 5px; position:relative" id="myAssignment"></canvas>
+                    </div>
+
+                    <script src="~/js/pdf.js"></script>
+                    <script type="text/javascript">
+                    function makeThumbAssignment(page)
+                    { var vp = page.getViewport(0.7);
+
+                         canvas = document.getElementById('myAssignment');
+                        canvas.width = 220;
+                        canvas.height = 240;
+                        var scale = Math.min(canvas.width / vp.width, canvas.height / vp.height);
+                        return page.render({ canvasContext: canvas.getContext("2d"), viewport: page.getViewport(scale)}).promise.then(function() {
+                        return canvas;
+                    });
+                }
+                pdfjsLib.getDocument("http://localhost/assignmentfiles/" + "@Model.Summative.Id" + ".pdf").promise.then(function(doc) {
+                         return doc.getPage(1).then(makeThumbAssignment)
+                }).catch (console.error);
+                    </script>
+
+
+
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                  
+                    <input type="hidden" asp-for="@Model.Summative.Assignment.Id" />
+                </div>
+            }
+            @if (Model.Summative.AssessmentType == SD.Practical)
+            {
+                <div id="Practical" class="content form-group row">
+                    <div class="col-2" style="padding-left:15px;padding-right:15px">
+                        @Html.Label("Description")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <P>Provide a detailed description of the Practical Task below:</P>
+                        @Html.TextAreaFor(m => m.Summative.Practical.Description, htmlAttributes: new { cols = "100", rows = "5" })
+                    </div>
+                    <br /><br />
+                    <span asp-validation-for="Summative.Practical.Description" class="text-danger"></span>
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+
+                    <div class="col-2" style="padding-left:15px;padding-right:15px">
+                        @Html.Label("Requirements")
+                    </div>
+                    <div class="col-10" style="text-align:left">
+                        <P>Describe the Practical Submission requirements below:</P>
+                        @Html.TextAreaFor(m => m.Summative.Practical.Requirements, htmlAttributes: new { cols = "100", rows = "5" })
+                    </div>
+                    <br /><br />
+                    <span asp-validation-for="Summative.Practical.Requirements" class="text-danger"></span>
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                    <div class="col-2">
+                        <label asp-for="Summative.Practical.PracticalRequest" class="col-form-label"></label>
+                    </div>
+                    <div class="col-5">
+                        <input type="file" name="practicalfiles" accept="application/pdf" class="form-control border-0" />
+                    </div>
+                    <span asp-validation-for="Summative.Practical.PracticalRequest" class="text-danger"></span>
+                    <br /><br />
+
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                    <div class="col-2">
+                        <P> File Preview</P>
+                    </div>
+                    <div class="col-8" style="position:relative">
+                        <canvas style="border:1px solid #bababa; padding: 5px; position:relative" id="myPractical"></canvas>
+                    </div>
+
+                    <script src="~/js/pdf.js"></script>
+                    <script type="text/javascript">
+                    function makeThumbPractical(page)
+                    { var vp = page.getViewport(0.7);
+
+                         canvas = document.getElementById('myPractical');
+                        canvas.width = 220;
+                        canvas.height = 240;
+                        var scale = Math.min(canvas.width / vp.width, canvas.height / vp.height);
+                        return page.render({ canvasContext: canvas.getContext("2d"), viewport: page.getViewport(scale)}).promise.then(function() {
+                        return canvas;
+                    });
+                }
+                pdfjsLib.getDocument("http://localhost/practicalfiles/" + "@Model.Summative.Id" + ".pdf").promise.then(function(doc) {
+                         return doc.getPage(1).then(makeThumbPractical)
+                }).catch (console.error);
+                    </script>
+
+
+
+
+                    <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+                    
+                    <input type="hidden" asp-for="@Model.Summative.Practical.Id" />
+                </div>
+            }
+            <div class="form-group row">
+                <div class="col-5 offset-3">
+                    <partial name="_EditSAAndBackToListButton" model="@Model.CourseUnit.Id" />
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+            @*<script type="text/javascript">
+
+                $(document).ready(function () {
+
+                     tinymce.init({
+                    selector: 'textarea',
+                    plugins: 'preview tinydrive image link media table wordcount ',
+                    toolbar: ' undo redo | preview | insertfile | link image media | formatselect | bold italic forecolor backcolor formatpainter | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent',
+                    height: 300,
+                    // Tiny Drive specific options for more details on what these does check https://www.tiny.cloud/docs/plugins/drive/
+                    tinydrive_token_provider: '/Course/Summative/jwt',  media_live_embeds: true
+
+                    // tinydrive_upload_path: '/uploads',
+                    // tinydrive_max_image_dimension: 1024
+                });
+
+
+                 });
+
+            </script>*@
+
+        }

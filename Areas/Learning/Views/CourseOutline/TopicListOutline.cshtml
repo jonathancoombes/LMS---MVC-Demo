@@ -1,0 +1,150 @@
+﻿@using LMS.Utility
+@using LMS.Extentions
+@model LMS.Models.ViewModels.CourseUnitTopicViewModel
+@{
+    ViewData["Title"] = "TopicListOutline";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<br />
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Unit Topic List</h2>
+            <br />
+            
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-sm btn-secondary text-black-50" style="font-weight:600;" asp-controller="CourseOutline" asp-action="ContentOutline" asp-route-Id="@Model.CourseUnit.Id">
+                <i class="fas fa-arrow-left"></i> Back to Course Outline
+            </a>
+            <!--Renders a partial view-->
+
+
+        </div>
+        <p style="padding-left:20px; padding-right:20px; margin:0;color:#808080; font-size:smaller">
+            <b>Important Note: </b>Welcome to your Unit and Topic Outline Page. Here you can access the content for each topic directly and review your formative assessment progress. Remember that your progress is not tracked when viewing the topic content here. Visit the classroom tab above to progress through the course and to track your progress.
+        </p>
+    </div>
+
+    <br />
+    <div>
+        @if (Model.CourseTopicList.Count() > 0)
+        {
+            <table class="table table-striped border table-responsive">
+
+                <tbody>
+
+                <thead>
+                    <tr class="table-sm ">
+                        <td colspan="3" cellpadding="4" class="table-success" style="font-weight:700;">
+                            Unit: @Model.CourseUnit.Name
+                        </td>
+                        <td colspan="3" cellpadding="1" class="text-center table-warning" style="font-weight:700;">
+                            Formative Assessment
+                        </td>
+                    </tr>
+                    
+                    <tr class="table-striped">
+
+                        <th style="width:55%">@Html.DisplayNameFor(m => m.CourseTopicList)</th>
+                        <th>@Html.DisplayNameFor(m => m.CourseTopic.Reference)</th>
+                        <th style="width:15%; text-align:center">Content</th>
+                        <th style="text-align:center">Questions</th>
+                        <th style="width:8%;text-align:center">Results</th>
+                        <th style="width:35%";text-align:center">Review</th>
+                    </tr>
+                    
+                    </thead>
+                @foreach (var topic in Model.CourseTopicList)
+                {
+
+            <tr class="table-striped">
+
+                <td>
+                    @Html.DisplayFor(m => topic.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => topic.Reference)
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-sm btn-success text-white" asp-controller="CourseOutline" asp-action="TopicViewer" asp-route-Id="@topic.Id">
+                            <i class="fab fa-buffer"></i> &nbsp; OPEN TOPIC
+                        </a>
+                    </div>
+                </td>
+
+                <td style="width:12%; text-align:center">
+                    @if (topic.FAOrder != null && topic.FAOrder != "")
+                    {
+                        <p style="margin:0;padding:0"> @OrderList.ItemIdOrder(topic.FAOrder).Count() Questions</p>
+                    }
+                    else
+                    { <p style="margin:0;padding:0">No Questions</p>}
+                </td>
+
+                <td>
+                    <div class="btn-group" role="group">
+                        @if (Model.FormativeSessions.Count() > 0)
+                        {
+                            @foreach (var session in Model.FormativeSessions)
+                            {
+                                if (session != null && session.TopicId == topic.Id && session.PercentageAchieved != null)
+                                {<p style="font-weight:600;text-align:center;padding:5px;width: 80px;" class="btn-sm btn-warning">
+                                        @session.PercentageAchieved.ToString() %
+                                    </p>
+
+                                }
+                               
+                            }
+                        }
+
+
+
+                    </div>
+
+
+                  </td>
+
+
+                <td>
+                    @if (Model.FormativeSessions.Count() > 0)
+                    {
+                        @foreach (var session in Model.FormativeSessions)
+                        {
+                            if (session != null && session.TopicId == topic.Id && session.PercentageAchieved != null)
+                            {
+                                <div class="btn-group" role="group">
+                                    <button style="font-weight:400;width: 80px;" class="btn-sm btn-info" name="continue" id="continue" onclick="location.href='@Url.Action( "ViewResults","FormativeSession", new { sessionId = session.Id})';return false;">
+                                        <i class="fas fa-eye"></i> VIEW </button>
+                                </div>
+                            }
+                          }}
+                            </td>
+
+
+
+            </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+            <p class="text-black-50">No Topics Exists</p>
+        }
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+
+
+}

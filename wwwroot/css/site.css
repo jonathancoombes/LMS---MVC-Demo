@@ -1,0 +1,390 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+.showHide {
+    display: none!important;
+}
+
+/* Desktop*/
+@media screen and (min-width: 768px) {
+    .showHide {
+        display: inline-flex!important;
+    }
+
+    /*#toolbar > button {
+        display: none;
+    }*/
+}
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  font-size: 0.8rem;
+}
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  line-height: 60px; /* Vertically center the text there */
+}
+
+.lights-off {
+    background-color: rgba(22, 22, 22, 0.99) !important;
+    animation: fade 3s ease-in ;
+    background: url('/images/dust_scratchesDark.png')!important;
+}
+p {
+ padding:5px;margin:0px!important;
+}
+.pTight {
+padding: 0px !important;
+margin:0px!important;
+}
+.search-background {
+background: url('/images/dust_scratches.png');
+}
+.backgroundWhite {
+background-color:  white;
+padding: 25px;
+border-radius: 10px;
+margin-bottom: 30px;
+}
+.backgroundRed {
+    background-color: #f8f2f2;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+.backgroundWhiteBorder {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    border: 1px solid white;
+}
+.backgroundWhiteBorder10Padding {
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+
+.btn-SA {
+ background-color: #a83d46; 
+ border-color: #822c33;
+}
+.btn-SA:hover {
+        background-color: #e35f6a;
+        border-color: #a83d46;
+    }
+.btn-FA {
+    background-color: #a57900;
+    border-color: #856203;
+}
+    .btn-FA:hover {
+        background-color: #e5bb47;
+        border-color: #a57900;
+    }
+.btn-edit {
+    background-color: #214d37;
+    border-color: #1d3d2d;
+}
+
+    .btn-edit:hover {
+        background-color: #357856;
+        border-color: #214d37;
+    }
+
+
+
+.toasttitle {
+   font-size: large
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#toolbar {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .09);
+    color: #333435;
+    padding: 0.1em;
+    margin: 0 auto;
+   
+}
+
+.toolbarDark {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .99);
+    color: #e5e5e5!important;
+   
+}
+#toolbar button,
+#page-mode input {
+    color: #3b3a3a;
+    background-color: transparent;
+    font: inherit;
+    height: 35px;
+    width: 100px;
+    border: 1px solid #3b3a3a;
+    border-radius: 3px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.buttonDark {
+    color: #e5e5e5 !important;
+    background-color: transparent;border-color:#e5e5e5!important;
+    height: 35px;
+    width: 100px;
+    margin-right: 10px;
+    margin-left: 10px;
+
+}
+        #toolbar button:hover,
+        #toolbar .button:hover,
+        #toolbar .button:focus,
+        #toolbar button:focus,
+        #page-mode input:hover,
+        #page-mode input:focus {
+            color: #0a5697; text-decoration:none;
+        }
+
+#page-mode {
+    display: flex;
+    align-items: center;
+  
+}
+
+#viewport-container {
+    flex: 1;
+    background: #f8f2f2;
+    overflow: auto;
+}
+
+#viewport {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+    #viewport > div {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    #viewport canvas {
+        width: 100%;
+        box-shadow: 0 2px 5px gray; 
+    }
+#the-canvas2 {
+    overflow: hidden;
+}
+figure .image {
+    margin: auto;
+    overflow: hidden;
+    object-fit: contain;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.switch {
+    font-size: 1rem;
+    position:  relative;
+}
+
+    .switch input {
+        position: absolute;
+        height: 1px;
+        width: 1px;
+        background:none;
+        border: 0;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        overflow: hidden;
+        padding: 0;
+    }
+
+        .switch input + label {
+            position: relative;
+            min-width: calc(calc(2.375rem * .8) * 2);
+            border-radius: calc(2.375rem * .8);
+            height: calc(2.375rem * .8);
+            line-height: calc(2.375rem * .8);
+            display: inline-block;
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            vertical-align: middle;
+            text-indent: calc(calc(calc(2.375rem * .8) * 2) + .5rem);
+        }
+
+            .switch input + label::before,
+            .switch input + label::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: calc(calc(2.375rem * .8) * 2);
+                bottom: 0;
+                display: block;
+                box-shadow: 0 0 0 0.1rem #b7b6b6;
+            }
+
+            .switch input + label::before {
+                right: 0;
+                background-color: #dee2e6;
+                border-radius: calc(2.375rem * .8);
+                transition: 0.2s all;
+     
+            }
+
+            .switch input + label::after {
+                top: 2px;
+                left: 2px;
+                width: calc(calc(2.375rem * .8) - calc(2px * 2));
+                height: calc(calc(2.375rem * .8) - calc(2px * 2));
+                border-radius: 50%;
+                background-color: #033C73;
+                transition: 0.2s all;
+            }
+
+        .switch input:checked + label::before {
+            background-color: #033C73;
+        }
+
+        .switch input:checked + label::after {
+            margin-left: calc(2.375rem * .8);
+
+        }
+
+        .switch input:focus + label::before {
+            outline: none;
+        }
+
+        .switch input:disabled + label {
+            color: #868e96;
+            cursor: not-allowed;
+        }
+
+            .switch input:disabled + label::before {
+                background-color: #e9ecef;
+            }
+
+    .switch.switch-sm {
+        font-size: 0.875rem;
+    }
+
+        .switch.switch-sm input + label {
+            min-width: calc(calc(1.9375rem * .8) * 2);
+            height: calc(1.9375rem * .8);
+            line-height: calc(1.9375rem * .8);
+            text-indent: calc(calc(calc(1.9375rem * .8) * 2) + .5rem);
+        }
+
+            .switch.switch-sm input + label::before {
+                width: calc(calc(1.9375rem * .8) * 2);
+            }
+
+            .switch.switch-sm input + label::after {
+                width: calc(calc(1.9375rem * .8) - calc(2px * 2));
+                height: calc(calc(1.9375rem * .8) - calc(2px * 2));
+            }
+
+        .switch.switch-sm input:checked + label::after {
+            margin-left: calc(1.9375rem * .8);
+    
+        }
+
+    .switch.switch-lg {
+        font-size: 1.25rem;
+    }
+
+        .switch.switch-lg input + label {
+            min-width: calc(calc(3rem * .8) * 2);
+            height: calc(3rem * .8);
+            line-height: calc(3rem * .8);
+            text-indent: calc(calc(calc(3rem * .8) * 2) + .5rem);
+        }
+
+            .switch.switch-lg input + label::before {
+                width: calc(calc(3rem * .8) * 2);
+            }
+
+            .switch.switch-lg input + label::after {
+                width: calc(calc(3rem * .8) - calc(2px * 2));
+                height: calc(calc(3rem * .8) - calc(2px * 2));
+            }
+
+        .switch.switch-lg input:checked + label::after {
+            margin-left: calc(3rem * .8);
+        }
+
+    .switch + .switch {
+        margin-left: 0.5rem;
+    }
+
+video {
+    width: 100% !important;
+    height: auto !important;
+}
+
+
+.modal-open .datepicker {
+    left: 52% !important;
+ top:25% !important;
+
+}
+
+.datepicker {
+    z-index: 99999 !important;
+}

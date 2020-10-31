@@ -1,0 +1,116 @@
+﻿@using LMS.Extentions
+@using LMS.Utility
+@using LMS.Models.ViewModels
+@model SupportViewModel
+@{
+    ViewData["Title"] = "ClassList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Support Request Classes</h2>
+        </div>
+        <div class="col-6 text-right">
+
+            
+        </div>
+    </div>
+
+    <br />
+    <div>
+        @if (Model.Classes.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tr class="table-secondary">
+                    <th style="width:25%">
+                        Class Name
+                    </th>
+                    <th style="width:25%">
+                        @Html.DisplayNameFor(m => m.Class.Course)
+                    </th>
+                    <th style="width:13%;text-align:center">
+                        @Html.DisplayNameFor(m => m.Class.StartDate)
+                    </th>
+                    <th style="width:13%;text-align:center">
+                        @Html.DisplayNameFor(m => m.Class.EndDate)
+                    </th>
+                    <th style="width:3%; text-align:center">
+                        Open
+                    </th>
+                    <th style="width:3%; text-align:center">
+                        Closed
+                    </th>
+                    <th style="width:11%; text-align:center">Requests</th>
+
+
+
+                </tr>
+                @foreach (var item in Model.Classes)
+                {
+            <tr>
+                <td>
+                    @DisplayLimit.StringLength(item.Name, 55)
+                </td>
+                <td>
+                     @DisplayLimit.StringLength(item.Course.Name, 55)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => item.StartDate)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => item.EndDate)
+                </td>
+                <td style="text-align:center">
+
+                    @if (Model.SupportRequestList.Where(p => p.ClassId == item.Id).Where(p => p.Status != SD.StatusClosed).Count() > 0)
+                    {
+                        <p style="color:#44803d">@Model.SupportRequestList.Where(p => p.ClassId == item.Id).Where(p => p.Status != SD.StatusClosed).Count()</p>
+                    }
+                    else
+                    {
+                        <p>None</p>
+                    }
+                </td>
+                <td style="text-align:center">
+
+                    @if (Model.SupportRequestList.Where(p => p.ClassId == item.Id).Where(p => p.Status == SD.StatusClosed).Count() > 0)
+                    {
+                        <p style="color:chocolate">@Model.SupportRequestList.Where(p => p.ClassId == item.Id).Where(p => p.Status == SD.StatusClosed).Count()</p>
+                    }
+                    else
+                    {
+                        <p>None</p>
+                    }
+                </td>
+
+
+                <td>
+                    @if (Model.SupportRequestList.Where(p => p.ClassId == item.Id).Where(p => p.Status != SD.StatusClosed).Count() > 0)
+                    {<a asp-action="SupportRequestList" asp-controller="Support" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white"><i class="fas fa-envelope-open-text"></i><br /> @Model.SupportRequestList.Where(p => p.ClassId == item.Id).Count() Requests</a>}
+                else
+                {
+                    <a asp-action="SupportRequestList" asp-controller="Support" asp-route-id="@item.Id" class="btn btn-sm btn-danger text-white"><i class="fas fa-envelope"></i><br /> 0 Requests</a>
+                }
+
+
+            </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+            <h3>No Classes for Support Request Exists</h3>
+        }
+    </div>
+
+</div>
+
+
+

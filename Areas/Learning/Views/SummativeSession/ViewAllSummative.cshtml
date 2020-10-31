@@ -1,0 +1,543 @@
+﻿@using LMS.Models.ViewModels
+@using LMS.Utility
+@using LMS.LMSConfig
+@model SummativeSubmissionViewModel
+@{
+    ViewData["Title"] = "ViewAllSummative";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int? num = 0;
+}
+
+<div class=" col-12 container-fluid backgroundWhite">
+    <h2 class="text-info">Summative Assessment</h2>
+    <div class="col-2 float-right">
+        <a class="btn btn-sm btn-secondary text-black-50" style="font-weight:600;" asp-controller="CourseOutline" asp-action="ContentOutline" asp-route-Id="@Model.UnitId">
+            <i class="fas fa-arrow-left"></i> Back to Outline
+        </a>
+    </div><br />
+    <p><strong>Unit: @Model.UnitTitle</strong></p>
+    <p style="padding-left:5px; padding-right:20px; margin:0;color:#808080; font-size:smaller">
+        <b>Important Note: </b>Welcome to the Summative Assessment for the Unit. Here you can complete and review each Summative Assessment activity that forms part of your Unit.
+    </p>
+    <div class="col-12" style="padding-left:0;margin:0 auto">
+
+
+
+        @if (Model.QuestionCount > 0)
+        {
+            <hr />
+            <h4>Section: Knowledge Questionaire</h4>
+            <p style="display:inline; padding:0px">
+                Your summative assignment assessment consists of total of <strong>@Model.QuestionCount </strong>
+            </p>
+            @if (@Model.QuestionCount == 1)
+            {
+                <p style="display:inline; padding:0px">Question.</p>}
+            else if (@Model.QuestionCount > 1)
+            {<p style="display:inline; padding:0px">Questions.</p>}
+            <table class="table table-striped border">
+
+                <tr class="table-dark table-bordered table-sm text-dark">
+                    <th style="width:28%">
+                        Assessment Includes
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Time Allocation
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Attempts Allowed
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Grade
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Actions
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        @if (Model.DirectList.Count() > 0)
+                        {
+                            <p style="padding:0px!important;display:inline;margin:0"><i class="far fa-check-square"></i> &nbsp;Open Ended Questions</p>
+                            if (Model.DirectList != null && Model.DirectList.Count() > 0 && Model.SummativeSession != null && Model.SummativeSession.QuestionGradeTotal == null)
+                            {<p style="display:inline;padding:0px!important; margin:0px!important;font-size:small; color:#be5f1b">&nbsp; (Grading in Progress)</p>}
+                        }
+                        @if (Model.TFList.Count() > 0)
+                        {
+                            <p style="padding:0px!important;"><i class="far fa-check-square"></i> &nbsp;True or False Questions</p>
+                        }
+                        @if (Model.MCList.Count() > 0)
+                        {
+                            <p style="padding:0px!important;"><i class="far fa-check-square"></i> &nbsp;Multiple-Choice Questions</p>
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        <p> @(Model.QuestionMinutes * @Model.QuestionCount) Minutes</p>
+                    </td>
+                    <td style="text-align:center">
+                        <p>1</p>
+                    </td>
+                    <td style="text-align:center; margin:0 auto">
+                        @if (Model.QuestionCountCompleted > 0)
+                        {
+                            if (Model.SummativeSession.QuestionGradeTotal != null && (!(Model.QuestionCountCompleted < Model.QuestionCount)))
+
+                            {
+                                <button style="font-weight:600;text-align:center;padding:5px;width: 80px;" class="btn btn-xl btn-warning text-white" name="continue" id="continue"
+                                        onclick="location.href='@Url.Action("ViewResults", "SummativeSession", new { sessionId = Model.SummativeSession.Id })';return false;">
+                                    @Model.SummativeSession.QuestionGradeTotal.ToString() %
+                                </button>
+                            }
+                            else if (Model.SummativeSession.QuestionGradeTotal != null && ((Model.QuestionCountCompleted < Model.QuestionCount)))
+
+                            {
+                                <p style="color:#be5f1b">Completion Required</p>
+                            }
+                            if (Model.DirectList == null || Model.DirectList.Count() == 0 && Model.SummativeSession.QuestionGradeTotal == null && Model.SummativeSession.QuestionInProgressGrade != null)
+                            {
+                                <button style="font-weight:600;text-align:center;padding:5px;width: 80px;" class="btn btn-xl btn-warning text-white" name="continue" id="continue" onclick="location.href='@Url.Action("ViewResults", "SummativeSession", new { sessionId = Model.SummativeSubmission.SummativeSessionId })';return false;">
+                                    @Model.SummativeSession.QuestionInProgressGrade %
+                                </button>
+                            }
+                            else if (Model.SummativeSession.QuestionInProgressGrade != null && Model.SummativeSession.QuestionGradeTotal == null)
+                            {                            //if (Model.FinalGrade != null)
+                                <a style="font-weight:600;text-align:center;padding:5px;width: 80px;" class="btn btn-xl btn-warning text-white">
+                                    @Model.SummativeSession.QuestionInProgressGrade %
+                                </a><p style="color:#be5f1b">Not Finilised</p>
+                            }
+
+                        }
+                        else
+                        {
+                            <p>Not Available</p>
+                        }
+
+                    </td>
+                    <td style="text-align:center">
+                        @if (Model.QuestionCountCompleted == Model.QuestionCount)
+                        {
+                            <a class="btn btn-xl btn-success text-white" asp-controller="SummativeSession" asp-action="ViewResults" asp-route-sessionId="@Model.SummativeSession.Id">
+                                <i class="far fa-eye"></i> &nbsp; RESULTS
+                            </a>
+                        }
+                        else if (Model.QuestionCountCompleted == 0 && Model.QuestionCount > 0)
+                        {
+                            <a class="btn btn-xl btn-danger text-white" asp-controller="SummativeSession" asp-action="SummativeKnowledge" asp-route-unitId="@Model.UnitId">
+                                <i class="fas fa-hourglass-start"></i> &nbsp; START
+                            </a>
+                        }
+                        @if (Model.QuestionCountCompleted != 0 && Model.QuestionCountCompleted < Model.QuestionCount)
+                        {
+                            <a class="btn btn-xl btn-warning text-white" asp-controller="SummativeSession" asp-action="SummativeKnowledge" asp-route-unitId="@Model.UnitId">
+                                <i class="fas fa-hourglass-start"></i> &nbsp; CONTINUE
+                            </a>
+                        }
+
+                    </td>
+
+
+                </tr>
+
+
+            </table>
+
+        }
+
+        @*//Assignment Start*@
+        @if (Model.AssList.Count() > 0)
+        {
+            <hr />
+            <h4>Section: Assignment</h4>
+            <p style="display:inline; padding:0px">
+                Your summative assignment assessment consists of total of <strong>@Model.AssList.Count() </strong>
+            </p>
+            @if (Model.AssList.Count() == 1)
+            {
+                <p style="display:inline; padding:0px">Assignment.</p>
+            }
+            else if (Model.AssList.Count() > 1)
+            {
+                <p style="display:inline; padding:0px">Assignments.</p>
+            }
+
+            <table class="table table-striped border" style="margin-top:5px">
+
+                <tr class="table-info table-bordered table-sm">
+                    <th style="width:28%">
+                        Assignment Description
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Closes
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Submission
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Grade
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        View
+                    </th>
+                </tr>
+
+                @foreach (var assignment in Model.AssList)
+                {
+                    <tr>
+                        <td>
+                            <p style="padding:0px!important;">
+                                <i class="fas fa-tasks"></i> &nbsp;
+                                @Html.DisplayFor(m => assignment.Description)
+                            </p>
+                        </td>
+
+                        @*CLOSING COLUMN*@
+                        <td style="text-align:center">
+                            @if (Model.SubValList != null && Model.SubValList.Count() > 0)
+                            {
+                                @foreach (var subVal in Model.SubValList)
+                                {
+                                    if (assignment.SummId == subVal.SummativeId && subVal.Close > DateTime.Now)
+                                    {
+                                        @Html.DisplayFor(p => subVal.Close)
+                                    }
+                                    else if (assignment.SummId == subVal.SummativeId && subVal.Close < DateTime.Now)
+                                    {
+                                        <p style="font-weight:600; color:#a71d1d"> CLOSED </p>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                <p style="font-weight:600; color:#ff6a00"> NOT SET </p>
+                            }
+                        </td>
+
+                        @*ASSIGNMENTS WITH SUBMISSIONS*@
+
+                        @if (Model.AssSub != null && Model.AssSub.Count() > 0)
+                        {
+                            @foreach (var pair in Model.AssSub)
+                            {
+                                //Submmited, Graded and Grade Response Received
+                                if (pair.Key.Id == assignment.Id && Model.AssSub[pair.Key].GradePercentage != null && (Model.AssSub[pair.Key].AssignmentGraded != null && Model.AssSub[pair.Key].AssignmentGraded != ""))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-danger text-white" asp-controller="SummativeSession" asp-action="AssignmentSubmission" asp-route-assignId="@assignment.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="far fa-eye"></i> &nbsp; VIEW SUBMISSION
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <a href="@Model.AssSub[pair.Key].AssignmentGraded" style="font-weight:600;text-align:center;padding:5px;width: 80px;" class="btn btn-xl btn-success text-white">
+                                            RESULTS: @Model.AssSub[pair.Key].GradePercentage %
+                                        </a>
+                                    </td>
+                                }
+                                //Submmited. No grade or response received yet.
+                                else if (pair.Key.Id == assignment.Id && Model.AssSub[pair.Key].GradePercentage == null && Model.AssSub[pair.Key].AssignmentGraded == null)
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-warning text-white" asp-controller="SummativeSession" asp-action="AssignmentSubmission" asp-route-assignId="@assignment.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="far fa-file-alt"></i> &nbsp; MANAGE
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Grade Pending</p>
+                                    </td>
+
+                                }
+                                if (pair.Key.Id == assignment.Id && Model.AssSub[pair.Key].GradePercentage != null && (Model.AssSub[pair.Key].AssignmentGraded == null || Model.AssSub[pair.Key].AssignmentGraded == ""))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-danger text-white" asp-controller="SummativeSession" asp-action="AssignmentSubmission" asp-route-assignId="@assignment.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="far fa-eye"></i> &nbsp; VIEW SUBMISSION
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>RESULTS: @Model.AssSub[pair.Key].GradePercentage % </p>
+                                    </td>
+
+                                }
+                            }
+                        }
+
+                        @if (Model.SubValList != null && Model.SubValList.Count() > 0)
+                        {
+                            num = Model.SubValList.Where(p => p.SummativeId == assignment.SummId).ToList().Count();
+
+                            @*ASSIGNMENTS WITH NO SUBMISSIONS*@
+                            @foreach (var subVal in Model.SubValList)
+                            {
+                                @*WITH DATE AND OPEN*@
+                                if ((assignment.SummId == subVal.SummativeId && subVal.Close > DateTime.Now)
+                                    && (Model.AssSub == null || Model.AssSub.Count() == 0 || (!Model.AssSub.ContainsKey(assignment))))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-danger text-white" asp-controller="SummativeSession" asp-action="AssignmentSubmission" asp-route-assignId="@assignment.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="fas fa-arrow-up"></i> &nbsp; SUBMIT
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Not Available</p>
+                                    </td>
+                                }
+                                if ((assignment.SummId == subVal.SummativeId && subVal.Close < DateTime.Now)
+                                    && (Model.AssSub == null || Model.AssSub.Count() == 0 || (!Model.AssSub.ContainsKey(assignment))))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-dark text-white">
+                                            <i class="far fa-frown-open"></i> &nbsp; CLOSED
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Not Available</p>
+                                    </td>
+                                }
+                                @*ASSIGNMENTS BUT NO DATE SET!!*@
+                                @if ((assignment.SummId == subVal.SummativeId && Model.SubValList == null || Model.SubValList.Count() == 0) && (Model.AssSub != null && (!Model.AssSub.ContainsKey(assignment))))
+
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-dark text-white">
+                                            <i class="far fa-frown-open"></i> &nbsp; CLOSED
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Not Available</p>
+                                    </td>
+                                }
+
+                            }
+
+
+                        }
+
+                        else
+                        {
+
+                            <td style="text-align:center">
+                                <a class="btn btn-xl btn-dark text-white">
+                                    <i class="far fa-frown-open"></i> &nbsp; CLOSED
+                                </a>
+                            </td>
+                            <td style="text-align:center">
+                                <p>Not Available</p>
+                            </td>
+                        }
+
+                        @*ALL ASSIGNMENTS*@
+
+                        <td style="text-align:center;">
+                            <a class="btn btn-xl btn-info text-white" asp-controller="SummativeSession" asp-action="GetPDF" asp-route-pdf="@assignment.AssignmentRequest">
+                                ASSIGNMENTS
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+
+
+        @*//Practical Start*@
+
+        @if (Model.PractList.Count() > 0)
+        {
+            <hr />
+            <h4>Section: Practical</h4>
+            <p style="display:inline; padding:0px">
+                Your summative practical assessment consists of total of <strong>@Model.PractList.Count() </strong>
+            </p>
+            @if (Model.PractList.Count() == 1)
+            {
+                <p style="display:inline; padding:0px">Practical.</p>
+            }
+            else if (Model.PractList.Count() > 1)
+            {
+                <p style="display:inline; padding:0px">Practicals.</p>
+            }
+
+            <table class="table table-striped border" style="margin-top:5px">
+
+                <tr class="table-info table-bordered table-sm">
+                    <th style="width:28%">
+                        Practical Description
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Closes
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Submission
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        Grade
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        View
+                    </th>
+                </tr>
+
+                @foreach (var practical in Model.PractList)
+                {
+                    <tr>
+                        <td>
+                            <p style="padding:0px!important;">
+                                <i class="fas fa-tasks"></i> &nbsp;
+                                @Html.DisplayFor(m => practical.Description)
+                            </p>
+                        </td>
+
+                        @*CLOSING COLUMN*@
+                        <td style="text-align:center">
+                            @if (Model.SubValList != null && Model.SubValList.Count() > 0)
+                            {
+                                @foreach (var subVal in Model.SubValList)
+                                {
+                                    if (practical.SummId == subVal.SummativeId && subVal.Close > DateTime.Now)
+                                    {
+                                        @Html.DisplayFor(p => subVal.Close)
+                                    }
+                                    else if (practical.SummId == subVal.SummativeId && subVal.Close < DateTime.Now)
+                                    {
+                                        <p style="font-weight:600; color:#a71d1d"> CLOSED </p>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                <p style="font-weight:600; color:#ff6a00"> NOT SET </p>
+                            }
+                        </td>
+
+                        @*PRACTICALS WITH SUBMISSIONS*@
+
+                        @if (Model.PracSub != null && Model.PracSub.Count() > 0)
+                        {
+                            @foreach (var pair in Model.PracSub)
+                            {
+                                //Submmited, Graded and Grade Response Received
+                                if (pair.Key.Id == practical.Id && Model.PracSub[pair.Key].GradePercentage != null && (Model.PracSub[pair.Key].PracticalGraded != null && Model.PracSub[pair.Key].PracticalGraded != ""))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-danger text-white" asp-controller="SummativeSession" asp-action="PracticalSubmission" asp-route-practId="@practical.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="far fa-eye"></i> &nbsp; VIEW SUBMISSION
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <a href="@Model.PracSub[pair.Key].PracticalGraded" style="font-weight:600;text-align:center;padding:5px;width: 80px;" class="btn btn-xl btn-success text-white">
+                                            RESULTS: @Model.PracSub[pair.Key].GradePercentage %
+                                        </a>
+                                    </td>
+                                }
+                                //Submmited. No grade or response received yet.
+                                else if (pair.Key.Id == practical.Id && Model.PracSub[pair.Key].GradePercentage == null && Model.PracSub[pair.Key].PracticalGraded == null)
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-warning text-white" asp-controller="SummativeSession" asp-action="PracticalSubmission" asp-route-practId="@practical.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="far fa-file-alt"></i> &nbsp; MANAGE
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Grade Pending</p>
+                                    </td>
+
+                                }
+                                if (pair.Key.Id == practical.Id && Model.PracSub[pair.Key].GradePercentage != null && (Model.PracSub[pair.Key].PracticalGraded == null || Model.PracSub[pair.Key].PracticalGraded == ""))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-danger text-white" asp-controller="SummativeSession" asp-action="PracticalSubmission" asp-route-practId="@practical.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="far fa-eye"></i> &nbsp; VIEW SUBMISSION
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>RESULTS: @Model.PracSub[pair.Key].GradePercentage % </p>
+                                    </td>
+
+                                }
+                            }
+                        }
+
+                        @if (Model.SubValList != null && Model.SubValList.Count() > 0)
+                        {
+                            num = Model.SubValList.Where(p => p.SummativeId == practical.SummId).ToList().Count();
+
+                            @*ASSIGNMENTS WITH NO SUBMISSIONS*@
+                            @foreach (var subVal in Model.SubValList)
+                            {
+                                @*WITH DATE AND OPEN*@
+                                if ((practical.SummId == subVal.SummativeId && subVal.Close > DateTime.Now)
+                                    && (Model.PracSub == null || Model.PracSub.Count() == 0 || (!Model.PracSub.ContainsKey(practical))))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-danger text-white" asp-controller="SummativeSession" asp-action="PracticalSubmission" asp-route-practId="@practical.Id" asp-route-unitId="@Model.UnitId">
+                                            <i class="fas fa-arrow-up"></i> &nbsp; SUBMIT
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Not Available</p>
+                                    </td>
+                                }
+                                if ((practical.SummId == subVal.SummativeId && subVal.Close < DateTime.Now)
+                                    && (Model.PracSub == null || Model.PracSub.Count() == 0 || (!Model.PracSub.ContainsKey(practical))))
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-dark text-white">
+                                            <i class="far fa-frown-open"></i> &nbsp; CLOSED
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Not Available</p>
+                                    </td>
+                                }
+                                @*ASSIGNMENTS BUT NO DATE SET!!*@
+                                @if ((practical.SummId == subVal.SummativeId && Model.SubValList == null || Model.SubValList.Count() == 0) && (Model.PracSub != null && (!Model.PracSub.ContainsKey(practical))))
+
+                                {
+                                    <td style="text-align:center">
+                                        <a class="btn btn-xl btn-dark text-white">
+                                            <i class="far fa-frown-open"></i> &nbsp; CLOSED
+                                        </a>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <p>Not Available</p>
+                                    </td>
+                                }
+
+                            }
+
+
+                        }
+
+                        else
+                        {
+
+                            <td style="text-align:center">
+                                <a class="btn btn-xl btn-dark text-white">
+                                    <i class="far fa-frown-open"></i> &nbsp; CLOSED
+                                </a>
+                            </td>
+                            <td style="text-align:center">
+                                <p>Not Available</p>
+                            </td>
+                        }
+
+                        @*ALL ASSIGNMENTS*@
+
+                        <td style="text-align:center;">
+                            <a class="btn btn-xl btn-info text-white" asp-controller="SummativeSession" asp-action="GetPDF" asp-route-pdf="@practical.PracticalRequest">
+                                ASSIGNMENTS
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+
+
+
+    </div>
+
+
+</div>
+

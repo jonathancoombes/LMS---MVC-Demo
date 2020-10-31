@@ -1,0 +1,202 @@
+﻿@using LMS.Models.ViewModels
+@using LMS.Utility
+@model SummativeSubmissionViewModel
+@{
+    ViewData["Title"] = "ViewResults";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="toolbar" class="row text-center container-fluid col-xl-12 backgroundWhite" style="width: 100%;font-size:0.9em; ">
+
+    <div class="" style="margin:0 auto;padding:15px; min-width:50%">
+        <h1 style="color:#2372ad">Summative Results Review</h1>
+        @if (Model.FinalGrade != null)
+        {
+            <h4 style="font-size:x-large; padding-top:0px;font-weight:600; padding-bottom:30px;color:#2372ad">FINAL PERCENTAGE ACHIEVED</h4>
+            <p style="border-radius:55px; display:inline;width:20px;background:#2372ad; padding-right:13px; padding-left:13px; font-size: xx-large; padding-top:25px; padding-bottom:25px; border:#b6d5eb 6px double ;color:#fafafa">@Model.FinalGrade%</p><br /><br /><br />
+
+        }
+        else if(Model.ProvisionalGrade != null && Model.FinalGrade == null)
+        {
+            <h4 style="font-size:x-large; padding-top:0px;font-weight:600; padding-bottom:30px;color:#2b90dc">GRADING IN PROGRESS - PROVISIONAL RESULTS</h4>
+            <p style="border-radius:55px; display:inline;width:20px;background:#31a0f3; padding-right:13px; padding-left:13px; font-size: xx-large; padding-top:25px; padding-bottom:25px; border:#b6d5eb 6px double ;color:#fafafa">@Model.ProvisionalGrade%</p><br /><br /><br />
+
+        }
+
+        @if (Model.SumList.Count() > 0)
+        {
+            var i = 0;
+            foreach (var summ in Model.SumList)
+            {
+                i++;
+                foreach (var sub in Model.SubList)
+                {
+
+                    if (sub.SummativeId == summ.Id)
+                    {
+                        if (summ.AssessmentType == SD.TrueFalse)
+                        {
+                            <div class="text-lg-left pTight" style="background:#fafafa!important; border:1px solid #aaa4a4; padding:20px;">
+                                <p style="font-size:larger;font-weight:600;background:#f6f3e6;border-bottom:1px solid #bfbfbf ;">@i.ToString(). Question: @summ.TrueFalse.Question </p>
+
+                                @if (sub.TFAnswer == "False" && sub.GradePercentage >= SD.SASubPassMark)
+                                {
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#2d8732">Correct Answer: FALSE <i class="far fa-check-circle"></i> CORRECT!</p>
+                                    <p class="col-form-label-sm">Incorrect Answer: TRUE</p>
+                                }
+                                else if (sub.TFAnswer == "True" && sub.GradePercentage >= SD.SASubPassMark)
+                                {
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#2d8732">Correct Answer: TRUE <i class="far fa-check-circle"></i> CORRECT!</p>
+                                    <p class="col-form-label-sm">Incorrect Answer: FALSE</p>
+                                }
+                                @if (sub.TFAnswer == "False" && sub.GradePercentage < SD.SASubPassMark)
+                                {
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#e04807">Incorrect Answer: FALSE <i class="far fa-times-circle"></i> INCORRECT!</p>
+                                    <p class="col-form-label-sm" style="color:#2d8732">Correct Answer: TRUE</p>
+                                }
+                                else if (sub.TFAnswer == "True" && sub.GradePercentage < SD.SASubPassMark)
+                                {
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#e04807">Incorrect Answer: TRUE <i class="far fa-times-circle"></i> INCORRECT!</p>
+                                    <p class="col-form-label-sm" style="color:#2d8732">Correct Answer: FALSE</p>
+                                }
+                            </div><br />
+                        }
+                        else if (summ.AssessmentType == SD.MultipleChoice)
+                        {
+                            <div class="text-lg-left pTight" style="background:#fafafa!important; border:1px solid #aaa4a4; padding:20px;">
+                                <p style="font-size:larger;font-weight:600; border-bottom:1px solid #bfbfbf ;background:#f6f3e6">@i.ToString(). Question: @summ.MultipleChoice.Question </p>
+
+                                @if (sub.MCAnswer == "A" && sub.GradePercentage >= SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#2d8732">A) @summ.MultipleChoice.AnswerA - <i class="far fa-check-circle"></i>CORRECT!</p>
+                                    <p class="col-form-label-sm">B) @summ.MultipleChoice.AnswerB</p>
+                                    <p class="col-form-label-sm">C) @summ.MultipleChoice.AnswerC</p>
+                                    <p class="col-form-label-sm">D) @summ.MultipleChoice.AnswerD</p>
+                                }
+                                else if (sub.MCAnswer == "A" && sub.GradePercentage < SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#e04807">A) @summ.MultipleChoice.AnswerA <i class="far fa-times-circle"></i> INCORRECT!</p>
+                                    <p class="col-form-label-sm">B) @summ.MultipleChoice.AnswerB</p>
+                                    <p class="col-form-label-sm">C) @summ.MultipleChoice.AnswerC</p>
+                                    <p class="col-form-label-sm">D) @summ.MultipleChoice.AnswerD</p>
+                                    <p style="border-top:1px solid #bfbfbf;color:#2d8732">Correct Answer: @summ.MultipleChoice.CorrectAnswer</p>
+                                }
+                                @if (sub.MCAnswer == "B" && sub.GradePercentage >= SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm">A) @summ.MultipleChoice.AnswerA</p>
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#2d8732">B) @summ.MultipleChoice.AnswerB <i class="far fa-check-circle"></i> CORRECT!</p>
+                                    <p class="col-form-label-sm">C) @summ.MultipleChoice.AnswerC</p>
+                                    <p class="col-form-label-sm">D) @summ.MultipleChoice.AnswerD</p>
+                                }
+                                else if (sub.MCAnswer == "B" && sub.GradePercentage < SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm">A) @summ.MultipleChoice.AnswerA</p>
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#e04807">B) @summ.MultipleChoice.AnswerB <i class="far fa-times-circle"></i> INCORRECT!</p>
+                                    <p class="col-form-label-sm">C) @summ.MultipleChoice.AnswerC</p>
+                                    <p class="col-form-label-sm">D) @summ.MultipleChoice.AnswerD</p>
+                                    <p style="border-top:1px solid #bfbfbf;color:#2d8732">Correct Answer: @summ.MultipleChoice.CorrectAnswer</p>
+                                }
+                                @if (sub.MCAnswer == "C" && sub.GradePercentage >= SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm bg-secondary">A) @summ.MultipleChoice.AnswerA</p>
+                                    <p class="col-form-label-sm bg-secondary">B) @summ.MultipleChoice.AnswerB</p>
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#2d8732">C) @summ.MultipleChoice.AnswerC <i class="far fa-check-circle"></i> CORRECT!</p>
+                                    <p class="col-form-label-sm bg-secondary">D) @summ.MultipleChoice.AnswerD</p>
+                                }
+                                else if (sub.MCAnswer == "C" && sub.GradePercentage < SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm">A) @summ.MultipleChoice.AnswerA</p>
+                                    <p class="col-form-label-sm">B) @summ.MultipleChoice.AnswerB</p>
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#e04807">C) @summ.MultipleChoice.AnswerC <i class="far fa-times-circle"></i> INCORRECT!</p>
+                                    <p class="col-form-label-sm">D) @summ.MultipleChoice.AnswerD</p>
+                                    <p style="border-top:1px solid #bfbfbf;color:#2d8732">Correct Answer: @summ.MultipleChoice.CorrectAnswer</p>
+                                }
+                                @if (sub.MCAnswer == "D" && sub.GradePercentage >= SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm">A) @summ.MultipleChoice.AnswerA</p>
+                                    <p class="col-form-label-sm">B) @summ.MultipleChoice.AnswerB</p>
+                                    <p class="col-form-label-sm">C) @summ.MultipleChoice.AnswerC</p>
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#2d8732">D) @summ.MultipleChoice.AnswerD <i class="far fa-check-circle"></i> CORRECT!</p>
+                                }
+                                else if (sub.MCAnswer == "D" && sub.GradePercentage < SD.SASubPassMark)
+                                {
+
+                                    <p class="col-form-label-sm">A) @summ.MultipleChoice.AnswerA</p>
+                                    <p class="col-form-label-sm">B) @summ.MultipleChoice.AnswerB</p>
+                                    <p class="col-form-label-sm">C) @summ.MultipleChoice.AnswerC</p>
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#e04807">D) @summ.MultipleChoice.AnswerD <i class="far fa-times-circle"></i> INCORRECT!</p>
+                                    <p style="border-top:1px solid #bfbfbf;color:#2d8732">Correct Answer: @summ.MultipleChoice.CorrectAnswer</p>
+
+                                }
+
+
+                            </div><br />
+                        }
+
+
+
+                        if (summ.AssessmentType == SD.DirectQuestion)
+                        {
+                            <div class="text-lg-left pTight" style="background:#fafafa!important; border:1px solid #aaa4a4; padding:20px;">
+                                <p style="font-size:larger;font-weight:600;background:#f6f3e6;border-bottom:1px solid #bfbfbf ;">@i.ToString(). Question: @summ.DirectQuestion.Question </p>
+
+                                @if (sub.DirectAnswer != "" && sub.GradePercentage != null && sub.GradePercentage >= SD.SASubPassMark)
+                                {
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#2d8732">@sub.DirectAnswer <i class="far fa-check-circle"></i> CORRECT!</p>
+                                }
+                                else if (sub.DirectAnswer != "" && sub.GradePercentage != null && sub.GradePercentage < SD.SASubPassMark)
+                                {
+                                    <p class="col-form-label-sm" style="font-weight: 600;color:#e04807">@sub.DirectAnswer <i class="far fa-times-circle"></i> INCORRECT!</p>
+                                }
+                                @if (sub.DirectAnswer != "" && sub.GradePercentage == null)
+                                {
+                                    <p class="col-form-label-sm" style="font-weight: 600; background: #daefff; ">Grading Pending... </p>
+
+                                }
+                                else if (sub.DirectAnswer != "" && SD.AnswerGuideVisible)
+                                {
+                                    <p class="col-form-label-sm" style="color:#2d8732">Correct Answer Guide: @summ.DirectQuestion.AnswerGuide</p>
+                                }
+                            </div><br />
+                        }
+
+
+
+
+
+
+
+
+
+
+                    }
+                }
+
+
+            }
+
+
+
+        }
+        else
+        {
+
+            <p>No results are aavailable</p>
+        }
+    </div>
+
+    <div class="col-12 float-lg-right">
+        <button style="width: 170px;" class="btn-success text-light" name="continue" id="continue" onclick="location.href='@Url.Action( "ViewAllSummative","SummativeSession", new { Id = Model.UnitId})';return false;">
+            <i class="fas fa-arrow-left"></i> &nbsp; GO BACK
+        </button>
+        <br /><br />
+    </div>
+
+</div>

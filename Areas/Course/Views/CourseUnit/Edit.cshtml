@@ -1,0 +1,94 @@
+﻿@using LMS.Extentions
+@model LMS.Models.ViewModels.CourseUnitViewModel
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-info">Edit Course Unit</h2>
+<br />
+<div class="border backgroundWhite row">
+
+
+    <div class="col-10">
+
+        <h4 class="text-black-50">Course: @Model.Course.Name</h4>
+        <br />
+        <form method="post" asp-action="Edit">
+
+            <input type="hidden" value="@Model.Course.Id" id="courseId" name="courseId" />
+            <input type="hidden" value="@Model.CourseUnit.Id" id="unitId" name="unitId" />
+            <input type="hidden" value="@Model.CourseUnit.CourseTopicIds" id="topicOrder" name="topicOrder" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.CourseUnit.Name" class="col-form-label"></label>
+                </div>
+
+                <div class="col-7">
+
+                    <input asp-for="@Model.CourseUnit.Name" class="form-control" />
+
+                </div>
+                <span asp-validation-for="@Model.CourseUnit.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.CourseUnit.Reference" class="col-form-label"></label>
+                </div>
+                <div class="col-3">
+                    <input asp-for="@Model.CourseUnit.Reference" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.CourseUnit.Level" class="col-form-label"></label>
+                </div>
+                <div class="col-2">
+                    <input asp-for="@Model.CourseUnit.Level" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.CourseUnit.Credits" class="col-form-label"></label>
+                </div>
+                <div class="col-2">
+                    <input asp-for="@Model.CourseUnit.Credits" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="CourseUnitAssignment.CourseModule" class="col-form-label"></label>
+                </div>
+
+                <div class="col-7">
+                    The module cannot be changed after Unit's creation.
+                    <select id="ddlModuleList" asp-for="CourseUnitAssignment.CourseModuleId" disabled asp-items="@(new SelectList(Model.CourseModuleList,"Id","Title"))" class="form-control"><option>Please select one</option></select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-6 offset-4">
+                    <partial name="_EditAndBackToListPartial" model="@Model.Course.Id" />
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+    
+
+</div>
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       
+
+}

@@ -1,0 +1,227 @@
+﻿@using LMS.Utility
+@using LMS.Models.ViewModels
+@model SummativeSubmissionViewModel
+
+@{
+    ViewData["Title"] = "SummativeKnowledge";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div id="toolbar" class="row text-center container-fluid col-xl-12 backgroundWhite" style="width: 100%;font-size:0.9em; ">
+    <form style="margin: 0 auto; padding:30px;width:90%" method="post" asp-action="CaptureSummativeKnowledge">
+        <input type="hidden" id="fSessionId" data-url="@Model.SummativeSubmission.SummativeSessionId" asp-for="@Model.SummativeSubmission.SummativeSessionId" />
+        <input type="hidden" id="sumId" data-sum="@Model.SummativeSubmission.SummativeId" asp-for="@Model.SummativeSubmission.SummativeId" />
+        <input type="hidden" id="classId" data-class="@Model.ClassEnrolId" asp-for="@Model.ClassEnrolId" />
+        <input type="hidden" id="userId" asp-for="@Model.SummativeSubmission.UserId" />
+        <input type="hidden" id="unitId" data-topic="@Model.UnitId" asp-for="@Model.UnitId" />
+
+
+        @if (Model.TrueFalse == null && Model.MultipleChoice == null && Model.DirectQuestion == null)
+        {
+            <div class="container-fluid" style="background:#094674; color:#fafafa; padding:5px; text-transform:full-width;font-weight:600"> Congratulations! Your Summative Knowledge Assessment in Complete. </div>
+
+        }
+        else
+        {
+            <h4 style="color:chocolate; font-weight:500">Summative Assessment In Progress...</h4><br />
+            <div class="container-fluid" style="background:#2372ad; color:#fafafa; padding:5px; text-transform:full-width;font-weight:600"> Read the @Model.QuestionType question below and submit your answer </div>
+
+        }
+
+    <div class="container-fluid" id="the-canvas2" style="padding:20px;  font-size:1.3em;border: 1px solid #aeabab;background:#fafafa">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+
+        @if (@Model.QuestionType == SD.MultipleChoice)
+        {
+
+            <div id="Multiple-Choice" class=" text-md-left" style="padding-bottom:10px;">
+                <div class="col-12 text-center" style="font-weight:600;">  Q: @Model.MultipleChoice.Question</div><br />
+
+
+                <div class="row col-10" style="font-size:smaller;font-weight:600; padding-bottom:10px; margin: 0 auto">
+
+                    <div class="col-8" style="margin: 0 auto;">
+                        Answer Options
+                    </div>
+                    <div class="col-2" style="margin: 0 auto">
+                        Choice
+                    </div>
+                </div>
+                <div class="row col-10">
+
+                    <div class="col-8" style="margin: 0 auto">
+                        a) @Model.MultipleChoice.AnswerA
+                    </div>
+                    <div class="col-1 text-center">
+                        @Html.RadioButtonFor(model => model.SummativeSubmission.MCAnswer, SD.AnswerOptionA)
+                    </div>
+                </div>
+
+
+                <div class="row col-10">
+                    <div class="col-8" style="margin: 0 auto">
+                        b)   @Model.MultipleChoice.AnswerB
+                    </div>
+                    <div class="col-1 text-center">
+                        @Html.RadioButtonFor(model => model.SummativeSubmission.MCAnswer, SD.AnswerOptionB)
+                    </div>
+                </div>
+
+
+                <div class="row col-10">
+                    <div class="col-8" style="margin: 0 auto">
+                        c)    @Model.MultipleChoice.AnswerC
+                    </div>
+                    <div class="col-1 text-center">
+                        @Html.RadioButtonFor(model => model.SummativeSubmission.MCAnswer, SD.AnswerOptionC)
+                    </div>
+                </div>
+
+                <div class="row col-10">
+                    <div class="col-8" style="margin: 0 auto">
+                        d)   @Model.MultipleChoice.AnswerD
+                    </div>
+                    <div class="col-1 text-center">
+                        @Html.RadioButtonFor(model => model.SummativeSubmission.MCAnswer, SD.AnswerOptionD)
+                    </div>
+                </div>
+                <span asp-validation-for="MultipleChoice" class="text-danger"></span>
+
+                <input type="hidden" asp-for="@Model.MultipleChoice.Id" />
+            </div>
+
+        }
+        else if (@Model.QuestionType == SD.TrueFalse)
+        {
+            <div id="TrueFalse" class="content form-group row" style="text-align:center">
+
+                <div class="col-10 offset-1" style="padding-bottom:20px;font-size:smaller;font-weight:600">
+                    Statement
+                    <div style="text-align: left; padding-top:15px;font-size:larger">
+                        @Model.TrueFalse.Question
+                    </div>
+                </div>
+                <div class="col-10 offset-1" style="font-size:smaller; font-weight:600 ">
+                    Answer
+                    <div style="font-weight:normal; font-size:larger">
+
+                        @Html.RadioButtonFor(model => model.SummativeSubmission.TFAnswer, SD.AnswerOptionTrue) True
+                        @Html.RadioButtonFor(model => model.SummativeSubmission.TFAnswer, SD.AnswerOptionFalse) False
+                    </div>
+                </div>
+
+                <br /><br />
+
+            </div>
+
+
+        }
+        @if (@Model.QuestionType == SD.DirectQuestion)
+        {
+            <div id="Direct" class="content form-group row" style="text-align:center">
+
+                <div class="col-10 offset-1" style="padding-bottom:20px;font-size:smaller;font-weight:600">
+     
+                    <div style="text-align: left; padding-top:15px;font-size:larger">
+                        Q: @Model.DirectQuestion.Question
+                    </div>
+                </div>
+                <div class="col-10 offset-1" style="font-size:smaller; font-weight:600 ">
+                    Answer
+                    <div class="col-md-10" style="font-weight:normal; margin:0 auto;padding-top:10px;font-size:larger">
+        
+                        @Html.TextAreaFor(m => m.SummativeSubmission.DirectAnswer, htmlAttributes: new { rows = "6", style = "width:90%" })
+
+                    </div>
+                </div>
+
+                <br /><br />
+
+            </div>
+
+
+        }
+
+
+
+        @if (Model.TrueFalse == null && Model.MultipleChoice == null && Model.DirectQuestion == null)
+        {
+            <div class="row " style="min-height:50px;margin:0 auto;">
+                <div style="padding:10px; background:rgba(67, 101, 131, 0.85); border: 1px solid #6da58f; font-size:smaller; min-height:300px;margin : 0 auto">
+                    <img style="margin:0 auto;padding-left:20px" src="~/images/done.png" alt="Completed" />
+
+                    <p style="font-size:x-large; padding-top:10px;font-weight:600; padding-bottom:20px;color:#fafafa">Grading in Progress..</p> <p  style="font-size:large;font-weight:400; padding-bottom:40px;color:#d7edfc; display:inline">Results will be shown on the Summative <br />Overview Page for this Unit once available.</p><br /><br />
+                    <button style="width: 170px;margin:0 auto" class="btn-success text-light" name="continue" id="continue" onclick="location.href='@Url.Action( "ViewAllSummative","SummativeSession", new { Id = Model.UnitId})';return false;">
+                        <i class="fas fa-eye"></i> &nbsp; TO OVERVIEW
+                    </button>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="row " style="max-height:50px;margin:0 auto;padding-top:10px;padding-bottom:15px ">
+
+
+                <div id="Summative" style="font-size:0.9em; margin: 0 auto">
+                    <button type="submit" id="summative" class="btn btn-success text-white" style="padding:0.3em;width:180px!Important; height:50px" data-form="summative"><i class="fas fa-arrow-right"></i> &nbsp;Submit Answer</button>
+                </div>
+
+
+            </div> <p style="font-size:smaller; padding-top:30px;padding-bottom:5px;font-weight:600; color:#2372ad">Questions Remaining:</p> <p style="border-radius:25px; display:inline;width:30px;background:#2372ad; padding-right:12px; padding-left:12px; padding-top:5px; padding-bottom:5px;color:#fafafa">@Model.QuestionCount </p>
+
+        }
+
+        <br />
+    </div>
+    </form>
+
+</div>
+
+
+
+
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+
+
+        var summativeId = $("#sumId").data("sum");
+        var classId = $("#classId").data("class");
+
+        $('#Summative').on('click', function () {
+
+                $.ajax({
+                    url: "/api/LearningSession/CompletedSA/" + classId + "/" + summativeId,
+                    type: "post", method: "post",
+                    cache: false,
+                    dataType: 'json',
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                });
+                //window.location.reload(true);
+
+
+            });
+
+
+
+        window.onresize = function () {
+
+            location.reload();
+        }
+
+
+
+    </script>
+
+
+
+
+
+}
+

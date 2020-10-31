@@ -1,0 +1,96 @@
+﻿@using LMS.Extentions
+@model LMS.Models.ViewModels.ClassViewModel
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-info">Create Class</h2>
+<br />
+<div class="border backgroundWhite row">
+
+
+    <div class="col-12 border-right">
+
+        <h4 class="text-black-50">Adding Class</h4>
+        <br />
+        <form method="post" asp-action="Create">
+
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+         
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.Class.Name" class="col-form-label"></label>
+                </div>
+
+                <div class="col-6">
+
+                    <input asp-for="@Model.Class.Name" class="form-control" />
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.Class.Course" class="col-form-label"></label>
+                </div>
+
+                <div class="col-4">
+
+                    <select id="ddlContentType" required asp-for="@Model.Class.CourseId" data-val-required="Select the Course Type" asp-items="@Model.Courses.ToSelectLisItem(Model.Class.CourseId)" class="form-control"><option disabled selected hidden>Please select one</option></select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Class.StartDate" class="col-form-label"></label>
+                </div>
+                <div class="col-4" style="text-align:left">
+                    <P>Select Course Open Date/Time:</P>
+                    @Html.EditorFor(model => model.Class.StartDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                </div>
+            </div>
+
+            <span asp-validation-for="@Model.Class.StartDate" class="text-danger"></span>
+
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Class.EndDate" class="col-form-label"></label>
+                </div>
+                <div class="col-4" style="text-align:left">
+                    <P>Select Course Close Date/Time:</P>
+                    @Html.EditorFor(model => model.Class.EndDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                </div>
+            </div>
+            <br /><br />
+            <span asp-validation-for="@Model.Class.EndDate" class="text-danger"></span>
+
+
+            <div class="form-group row">
+                <div class="col-5 offset-3">
+                    <partial name="_CreateClassAndBackToListButton" />
+                </div>
+            </div>
+
+        </form>
+
+</div>
+
+
+
+</div>
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+ 
+
+
+}

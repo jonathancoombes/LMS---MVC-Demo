@@ -1,0 +1,173 @@
+﻿@using LMS.Extentions
+@using LMS.Utility
+@using LMS.Models.ViewModels
+@model AssessmentViewModel
+@{
+    ViewData["Title"] = "EditGradeAssignment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var result = "";
+    var counter = 0;
+}
+
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6" style="padding-bottom:10px">
+            <h2 class="text-info">Grading Assignment Submissions</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 ">
+
+            <table style="opacity: 1" class="table table-sm table-striped table-responsive-sm">
+                <thead>
+                    <tr class="table-secondary table-sm text-dark table-responsive-sm text-center" style="box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1), 0 0px 0px 0 rgba(0, 0, 0, 0.19);">
+                        <th style="font-weight:600;color:lightslategray">
+                            Name
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Surname
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Identity
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Course
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Class
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center">
+                        <td>
+                            @Model.FirstName
+                        </td>
+                        <td>
+                            @Model.LastName
+                        </td>
+                        <td>
+                            @Model.IdNumber
+                        </td>
+
+                        <td>
+                            @Model.ClassEnrolment.Class.Course.Name
+                        </td>
+                        <td>
+                            @Model.ClassEnrolment.Class.Name
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+
+    </div>
+
+    <div>
+        @if (Model.SubmissionList.Count() > 0)
+        {
+
+            <form method="post" asp-action="SaveGradeAssignmentProject" name="SaveGradeAssignmentProject" asp-controller="Assessment" enctype="multipart/form-data">
+
+                <p class="bg-dark text-light">Unit: @Model.UnitTitle</p>
+                <table class="table table-striped  table-bordered table-responsive-sm">
+
+                    @foreach (var item in Model.SubmissionList)
+                    {
+                        counter++;
+                        <tr class="table-sm table-dark text-dark table-borderless" style="box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1), 0 0px 0px 0 rgba(0, 0, 0, 0.19);">
+                            <th colspan="2" style="width:42%;text-align:center;font-weight:600;border-bottom:1px solid#c2c0c0;">
+                                Description
+                            </th>
+                            <th style="width:42%;text-align:center;font-weight:600;border-bottom:1px solid#c2c0c0;border-top:0px">
+                                Submission Requirements
+                            </th>
+                            <th style="width:11%;text-align:center;font-weight:600;border-bottom:1px solid#c2c0c0;">
+                                Assignment
+                            </th>
+                        </tr>
+                        <tr style='@result' class="table-sm table-responsive-sm">
+                            <td span colspan="2" style="text-align:left; padding:10px;  background:#fcfcfc;font-weight:600">
+                                Assignment @counter.  @Html.DisplayFor(m => item.Summative.Assignment.Description)
+                            </td>
+                            <td style="text-align:left; padding:10px;  ">
+                                @Html.DisplayFor(m => item.Summative.Assignment.SubmissionRequirements)
+                            </td>
+                            <td style="text-align:center">
+                                <a class="btn btn-sm btn-SA text-light" asp-controller="SummativeSession" asp-action="GetPDF" asp-route-pdf="@item.Summative.Assignment.AssignmentRequest">
+                                    <i class="fas fa-cloud-download-alt"></i>&nbsp; <br /> Download
+                                </a>
+                            </td>
+                        </tr>
+                        <tr class="table-sm">
+                            <th style="width:22%;text-align:center;font-weight:600">
+                                Learner Submission
+                            </th>
+                            <th style="width:22%;text-align:center;font-weight:600">
+                                Current Graded Assignment
+                            </th>
+                            <th style="width:32%; text-align:center;font-weight:600">
+                                Upload Graded Assignment
+                            </th>
+                            <th style="width:10%; text-align:center;font-weight:600">
+                                Grade
+                            </th>
+                        </tr>
+                        <tbody>
+                            <tr class="table-responsive-sm">
+                                <td style="text-align:center;width: auto;">
+                                    <a class="btn btn-xl btn-success text-white" style="margin:0 auto" asp-controller="SummativeSession" asp-action="GetPDF" asp-route-pdf="@item.AssignmentSubmission">
+                                        <i class="fas fa-cloud-download-alt"></i>&nbsp; <br />View Submission
+                                    </a>
+                                </td>
+                                <td style="text-align:center; background:#fcfcfc">
+                                    @if (item.AssignmentGraded != "" && item.AssignmentGraded != null)
+                                    {
+                                        <p>@Html.DisplayFor(m => item.AssignmentGraded)</p>
+                                        <button asp-action="DeleteGrading" asp-controller="Assessment" asp-route-subId="@item.Id" style="width: 130px;" class="btn-danger text-light">
+                                            <i class="far fa-trash-alt"></i> &nbsp; DELETE FILE
+                                        </button>
+                                      
+                                    }
+                                    else
+                                    {
+                                        <p>Not Uploaded</p>
+                                    }
+
+                                </td>
+                                <td style="text-align:left; background:#fcfcfc">
+                                    <input type="file" name="files" accept="application/pdf" class="form-control border-0 " style="background:none" />
+                                </td>
+                                <td style="text-align:center">
+                                    <input type="text" asp-for="@item.GradePercentage" name="@item.Id" id="@item.Id" style="margin-bottom:5px" class="form-control" />
+                                    <button type="submit" asp-action="SaveGradeAssignmentProject" asp-controller="Assessment" asp-route-subId="@item.Id" asp-route-learnerId="@item.UserId" class="btn btn-sm btn-danger text-white text-center"><i class="fas fa-file-import"></i>&nbsp; Submit</button>
+
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    }
+
+                </table>
+            </form> }
+        else
+        {
+            <h3 class="text-sm-left">There's no Assignment Submissions available at this stage.</h3>
+        }
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+          
+}

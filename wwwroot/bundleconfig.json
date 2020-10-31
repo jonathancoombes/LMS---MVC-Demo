@@ -1,0 +1,30 @@
+
+  [
+    {
+      "outputFileName": "~/css/site.min.css",
+      "inputFiles": [
+        "~/css/site.css",
+        "~/lib/bootstrap/dist/css/bootstrap.css",
+        "~/lib/bootstrap/dist/css/bootstrap-grid.css",
+        "~/lib/bootstrap/dist/css/bootstrap-reboot.css"
+      ]
+    },
+    {
+      "outputFileName": "~/js/site.min.js",
+      "inputFiles": [
+        "wwwroot/lib/jquery/dist/jquery.js",
+        "~/js/pdf.js",
+        "~/lib/jquery-validation/dist/additional-methods.js",
+        "~/lib/jquery-validation/dist/jquery.validate.js",
+        "~/lib/jquery-validation-unobstrusive/jquery.validate.unobstrusive.js",
+        "~/lib/bootstrap/dist/js/bootstrap.bundle.js",
+        "~/js/8b0fdda286.js",
+        "~/js/tinymce.min.js"
+      ],
+      "minify": {
+        "enabled": true,
+        "renameLocals": true
+      },
+      "sourceMap": false
+    }
+  ]

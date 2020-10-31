@@ -1,0 +1,85 @@
+﻿@using static LMS.Extentions.OrderList
+@using LMS.Extentions
+@model LMS.Models.ViewModels.ClassViewModel
+@{
+    ViewData["Title"] = "AssessorClassList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Assessor Grading Class List</h2>
+        </div>
+      
+    </div>
+
+    <br />
+    <div>
+        @if (Model.Classes.Count() > 0)
+        {
+            <table class="table table-sm  table-hover table-bordered table-responsive-sm">
+
+                <tr class="table-primary">
+                    <th style="width:28%">
+                        @Html.DisplayNameFor(m => m.Class.Name)
+                    </th>
+                    <th style="width:28%">
+                        @Html.DisplayNameFor(m => m.Class.Course)
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        @Html.DisplayNameFor(m => m.Class.StartDate)
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        @Html.DisplayNameFor(m => m.Class.EndDate)
+                    </th>
+                   
+                    <th  colspan="7" cellpadding="2" style="width:3%; text-align:center">
+                       Evidence Submission Type
+                   </th>
+
+                </tr>
+                @foreach (var item in Model.Classes)
+                {
+            <tr>
+                <td>
+                    @DisplayLimit.StringLength(item.Name, 50)
+                </td>
+                <td>
+                    @DisplayLimit.StringLength(item.Course.Name, 60)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => item.StartDate)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => item.EndDate)
+                </td>
+
+                <td>
+                    <a asp-action="DirectList" asp-route-classId="@item.Id" asp-controller="Assessment" class="btn btn-sm btn-info"><i class="fas fa-tasks"></i>Questioning</a>
+                </td>
+                <td>
+                    <a asp-action="AssignmentList" asp-route-classId="@item.Id" asp-controller="Assessment" class="btn btn-sm btn-success"><i class="fas fa-scroll"></i>Assignments</a>
+                </td>
+                <td>
+                    <a asp-action="PracticalList" asp-route-classId="@item.Id" asp-controller="Assessment" class="btn btn-sm btn-warning"><i class="far fa-building"></i>Practicals</a>
+                </td>
+            </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+            <h3>No Classes Exists</h3>
+        }
+    </div>
+
+</div>
+
+
+

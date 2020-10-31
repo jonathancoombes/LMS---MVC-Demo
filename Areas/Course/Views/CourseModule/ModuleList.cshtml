@@ -1,0 +1,91 @@
+﻿@using LMS.Models.Course
+@model LMS.Models.ViewModels.CourseModuleViewModel
+@{
+    ViewData["Title"] = "ModuleList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<br /><br />
+
+      <div class="border backgroundWhite">
+     
+          <div class="row">
+              <div class="col-6">
+                  <h2 class="text-info">@Model.Course.Name</h2>
+                  <br />
+                  <h4 class="text-info text-black-50">Course Modules</h4>
+              </div>
+              <div class="col-6 text-right">
+
+                  <!--Renders a partial view-->
+                  <partial name="_CreateModuleButtonPartial" model="Model.Course.Id" />
+
+              </div>
+             
+          </div>
+
+          <br />
+          <div>
+              @if (Model.CourseModuleList.Count() > 0)
+              {
+              <table class="table table-striped border">
+
+                  <tr class="table-secondary">
+                      <th style="width:75%">
+                          @Html.DisplayNameFor(m => m.CourseModuleList)
+                      </th>
+                      <th></th>
+                      <th>Actions</th>
+
+                      <th>Position</th>
+
+                  </tr>
+                  @foreach (var item in Model.CourseModuleList)
+                  {
+              <tr>
+                  <td>
+                      @Html.DisplayFor(m => item.Title)
+                  </td>
+                  @if (item.CourseUnitOrder == null || item.CourseUnitOrder == "")
+                  {
+                      <td>
+                          <partial name="_CanDeleteTableButtonPartial" model="item.Id" />
+                      </td>
+                  }
+                  else
+                  {
+                      <td>
+                          <partial name="_CantDeleteTableButtonPartial" model="item.Id" />
+                      </td>
+                  }
+
+                  <td style="width:150px">
+
+                      <div class="btn-group" role="group">
+
+                          <a class="btn btn-sm btn-primary text-white" asp-action="MoveModuleUp" asp-route-Id="@item.Id">
+                              <i class="fas fa-chevron-up"></i>
+                          </a>
+                          <a class="btn btn-sm btn-dark text-white" asp-action="MoveModuleDown" asp-route-Id="@item.Id">
+                              <i class="fas fa-chevron-down"></i>
+                          </a>
+                      </div>
+
+                  </td>
+
+              </tr>
+                    
+                  }
+              
+
+              </table>
+              }
+              else
+              {
+                  <p class="text-black-50">No Modules Exists</p>
+              }
+          </div>
+
+      </div>
+      

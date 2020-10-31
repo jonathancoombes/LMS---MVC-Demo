@@ -1,0 +1,117 @@
+﻿@using LMS.Extentions
+@model LMS.Models.ViewModels.CourseModuleViewModel
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-info">Create Module</h2>
+<br />
+<div class="border backgroundWhite row">
+
+    <div class="col-8 border-right">
+        <form method="post" asp-action="Edit">
+            <!--To Controller-->
+            <input type="hidden" asp-for="@Model.CourseModule.Id" />
+            <!--To Jquery-->
+            <input type="hidden" value="@Model.CourseModule.CourseId" id="courseId" name="courseId" />
+            <input type="hidden" value="@Model.CourseModule.CourseUnitOrder" id="unitOrder" name="unitOrder" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group row">
+
+                <div class="col-3">
+                    <label asp-for="CourseModule.Title" class="col-form-label"></label>
+                </div>
+
+                <div class="col-5">
+
+                    <input asp-for="CourseModule.Title" class="form-control" />
+
+                </div>
+                <span asp-validation-for="CourseModule.Title" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-5 offset-3">
+                    <partial name="_EditAndBackToListPartial" model="Model.CourseModule.CourseId" />
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="col-3 offset-1">
+        <p>Existing Course Modules: </p>
+
+        <div id="ModuleList">
+
+            <ul class="list-group"></ul>
+
+        </div>
+
+
+
+    </div>
+
+
+</div>
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        function updateCourseModuleList() {
+
+            var myData = $("#courseId").val();
+
+            $list = $('#ModuleList');
+
+            $.ajax({
+                url: '/Course/CourseModule/GetCourseModules/' + myData,
+                type: 'GET',
+                dataType: 'text',
+                success: function (data) {
+
+                    results = JSON.parse(data);
+                    $list.html('');
+
+                    $list.append(' <ul class="list-group"> ')
+                    for (i in results) {
+                       if (results[i].text.length > 25) {
+                        $list.append('<li class="list-group-item">' +  results[i].text.substring(0, 25) + "...");
+                        } else {
+                       $list.append('<li class="list-group-item">' + results[i].text + '</li>')
+                            }
+                    }
+                    $list.append('</ul>');
+                }
+
+            });
+        }
+
+        //Now we call the above function on the following two occations (on change, document ready)
+
+        $(document).ready(function () {
+
+            updateCourseModuleList();
+
+        });
+
+        $("#ddlCourseList").on("change", function () {
+
+            updateCourseModuleList();
+
+        });
+
+
+    </script>
+
+
+}

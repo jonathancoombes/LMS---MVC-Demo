@@ -1,0 +1,101 @@
+﻿@using LMS.Models.ViewModels
+@model UserRoleViewModel
+@{
+    ViewData["Title"] = "EditRoles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Edit Roles</h2>
+        </div>
+
+    </div>
+    <form method="post" asp-action="EditRoles">
+        <br />
+
+        <div>
+
+            <input type="hidden" value="@Model.ApplicationUser.Id" id="Id" name="Id" />
+            <table class="table table-striped border">
+
+                <tr class="table-secondary">
+
+                    <th>
+                        @Html.DisplayNameFor(m => m.ApplicationUser.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.ApplicationUser.Surname)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.ApplicationUser.IdentityNumber)
+                    </th>
+                    <th style="text-align:center">
+                        Facilitator
+                    </th>
+                    <th style="text-align:center">
+                        Assessor
+                    </th>
+                    <th style="text-align:center">
+                        Designer
+                    </th>
+                    <th style="text-align:center">
+                        Administrator
+                    </th>
+
+
+
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => m.ApplicationUser.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m.ApplicationUser.Surname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m.ApplicationUser.IdentityNumber)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.CheckBoxFor(m => m.FacilitatorSelected, htmlAttributes: new { @class = "form-control input-lg" })
+                    </td>
+                    <td style="text-align:center">
+                        @Html.CheckBoxFor(m => m.AssessorSelected, htmlAttributes: new { @class = "form-control input-lg" })
+                    </td>
+                    <td style="text-align:center">
+                        @Html.CheckBoxFor(m => m.DesignerSelected, htmlAttributes: new { @class = "form-control input-lg" })
+                    </td>
+                    <td style="text-align:center">
+                        @if (Model.EditorIsAdmin == true)
+                        {
+                            @Html.CheckBoxFor(m => m.AdminSelected, htmlAttributes: new { @class = "form-control input-lg", @value = true, @disabled = Model.EditorIsAdmin })
+                            <input type="hidden" checked asp-for="@Model.AdminSelected" />
+
+                        }
+                        else
+                        {@Html.CheckBoxFor(m => m.AdminSelected, htmlAttributes: new { @class = "form-control input-lg" })}
+                    </td>
+
+                </tr>
+
+
+            </table>
+
+
+
+
+        </div>
+
+        <div class="row">
+            <div class="col-2 offset-4">
+                <input type="submit" class="btn btn-warning form-control" value="Update Roles" />
+            </div>
+
+        </div>
+
+    </form>
+</div>

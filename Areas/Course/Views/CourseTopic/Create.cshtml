@@ -1,0 +1,149 @@
+﻿@using LMS.Extentions
+@model LMS.Models.ViewModels.CourseUnitTopicViewModel
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-info">Create Course Topic</h2>
+<br />
+<div class="border backgroundWhite row">
+
+
+    <div class="col-12 border-right">
+
+        <h4 class="text-black-50">Adding Topic to: @Model.CourseUnit.Name</h4>
+        <br />
+        <form method="post" asp-action="Create" enctype="multipart/form-data">
+
+            <input type="hidden" asp-for="@Model.CourseUnit.Id" />
+
+            <!--To Jquery-->
+            <input type="hidden" value="@Model.CourseUnit.Id" id="Id" name="Id" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.CourseTopic.Name" class="col-form-label"></label>
+                </div>
+
+                <div class="col-6">
+
+                    <input asp-for="@Model.CourseTopic.Name" class="form-control" />
+
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.CourseTopic.Reference" class="col-form-label"></label>
+                </div>
+
+                <div class="col-3">
+
+                    <input asp-for="@Model.CourseTopic.Reference" class="form-control" />
+
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="CourseTopic.ContentType" class="col-form-label"></label>
+                </div>
+
+                <div class="col-3">
+
+                    <select id="ddlContentType" required asp-for="CourseTopic.ContentType" data-val-required="Select the Content Type" asp-items="@(new SelectList(Model.ContentType))" class="form-control"><option disabled selected hidden>Please select one</option></select>
+                </div>
+
+            </div>
+
+            <div id="Custom" class="content Custom form-group row" style="display:none">
+
+                <div class="col-12">
+                    @Html.TextAreaFor(m => m.CourseTopic.CustomContent, htmlAttributes: new { id = "texta" })
+                </div>
+                <span asp-validation-for="CourseTopic.CustomContent" class="text-danger"></span>
+            </div>
+
+            <div id="PDF" class="content PDF form-group row" style="display:none">
+
+                <div class="col-2">
+                    <label asp-for="CourseTopic.PDFContent" class="col-form-label"></label>
+                </div>
+                <div class="col-5">
+                    <input type="file" name="files" required accept="application/pdf" class="form-control border-0" />
+                </div>
+                <span asp-validation-for="CourseTopic.PDFContent" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group row">
+                <div class="col-5 offset-3">
+                    <partial name="_CreateTopicAndBackToListButton" model="@Model.CourseUnit.Id" />
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+</div>
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+  
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('.content').hide();
+            $(function () {
+
+                $('#ddlContentType').change(function () {
+                    $('.content').hide();
+                    $('#' + $(this).val()).show();
+
+                    $(function () {
+                      tinymce.init({
+                    selector: '#texta',
+                    plugins: 'preview tinydrive image link media table wordcount ',
+                    toolbar: ' undo redo | preview | insertfile | link image media | formatselect | bold italic forecolor backcolor formatpainter | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent',
+                    height: 800,
+                    // Tiny Drive specific options for more details on what these does check https://www.tiny.cloud/docs/plugins/drive/
+                    tinydrive_token_provider: '/Course/CourseTopic/jwt',  media_live_embeds: true
+
+                    // tinydrive_upload_path: '/uploads',
+                    // tinydrive_max_image_dimension: 1024
+                });
+
+                       
+                       
+                    });
+
+
+
+                });
+
+            });
+
+        });
+
+
+    </script>
+
+
+
+
+}

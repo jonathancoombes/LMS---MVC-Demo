@@ -1,0 +1,13 @@
+﻿@using LMS.Models.ViewModels
+@model CourseUnitTopicViewModel
+
+<div class="row">
+    <div class="col-6">
+
+        <input type="submit" class="btn btn-outline-info form-control" asp-route-id="@Model.CourseTopic.Id" value="Update" />
+
+    </div>
+    <div class="col-6">
+        <a asp-action="TopicList" asp-route-id="@Model.CourseTopic.CourseUnitId" class="btn btn-success form-control">Back to List</a>
+    </div>
+</div>

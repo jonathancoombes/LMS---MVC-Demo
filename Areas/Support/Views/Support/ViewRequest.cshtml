@@ -1,0 +1,202 @@
+﻿@using LMS.Models.ViewModels
+@using LMS.Utility
+@model SupportViewModel
+@{
+    ViewData["Title"] = "ViewRequest";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+
+}
+
+
+<br />
+<h2 class="text-info">Support Request</h2>
+<br />
+
+<form method="post" asp-action="Edit">
+
+    <div class="border backgroundWhite row" style="background-image: linear-gradient(90deg, #fdfbfb 0%, #f6f6f6 85%);">
+
+
+        <input type="hidden" value="@Model.SupportRequest.Id" id="reqId" name="reqId" />
+        <input type="hidden" value="@user.Id" id="senderId" name="senderId" />
+
+
+       
+        <div class="col-12">
+            <p style="margin:0;font-weight:bold;color:#22519c ">
+                <i>Original Request</i>
+            </p><hr />
+            <div class="form-group row">
+                <div class="col-3" style="margin-top:-10px">
+                    <label asp-for="@Model.SupportRequest.Open" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    @Html.DisplayFor(p => p.SupportRequest.Open)
+                </div>
+                <div class="col-3" style="margin-top:-10px">
+                    <label asp-for="@Model.SupportRequest.RequestHeading" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    <p style="margin:0;font-weight:600">@Html.DisplayFor(p => p.SupportRequest.RequestHeading) </p>
+                </div>
+
+                <div class="col-3" style="margin-top:-10px">
+                    <label asp-for="@Model.SupportRequest.RequestBody" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    @Html.DisplayFor(p => p.SupportRequest.RequestBody)
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-3" style="margin-top:-10px">
+                    <label asp-for="@Model.ApplicationUser" class="col-form-label"></label>
+                </div>
+                <div class="col-8" style="color:#22519c">
+                    @Html.DisplayFor(p => p.ApplicationUser.Name)
+                    @Html.DisplayFor(p => p.ApplicationUser.Surname)
+                </div>
+
+
+                <div class="col-3" style="margin-top:-10px">
+                    <label asp-for="@Model.SupportRequest.Status" class="col-form-label"></label>
+                </div>
+                <div class="col-8">
+                    @Html.DisplayFor(p => p.SupportRequest.Status)
+                </div>
+            </div>
+            
+
+            @if (Model.SupportResponseList.Count() > 0)
+            {
+                @foreach (var response in Model.SupportResponseList)
+                {<p style="font-weight:bold;margin:0; color:#3e7d58">
+
+                    </p><hr />
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <p style="margin:0; text-align:right">Response</p>
+                            @*<label asp-for="@response.ResponseDate" class="col-form-label" style="color:#87a191; font-size:smaller; margin:0"></label>*@
+                        </div>
+                        <div class="col-8" style="margin:0;color:#87a191; font-size:smaller;">
+
+                            Date:  @Html.DisplayFor(p => response.ResponseDate)
+                        </div>
+                        <div class="col-3">
+                            <p style="margin:0; text-align:right">From:</p>
+                        </div>
+                        <div class="col-8">
+                            @if (response.UserId == Model.ApplicationUser.Id)
+                            {
+                                <p style="margin:0; color:#22519c">@Model.ApplicationUser.Name  @Model.ApplicationUser.Surname (Learner)</p>
+                            }
+                            else
+                            {
+                                Model.Sender = await UserManager.FindByIdAsync(response.UserId);
+                                <p style="margin:0; color:#98582a">@Model.Sender.Name  @Model.Sender.Surname (Staff)</p>}
+                        </div>
+
+                        <div class="col-3">
+                            <br />
+                            <p style="margin:0;padding-top:25px; text-align:right; color:cadetblue; font-weight:600; font-style:italic"> <label asp-for="@response.ResponseBody" class="col-form-label"></label>:</p>
+                            <br />
+                        </div>
+                        <div class="col-9">
+                            <hr /> <br />
+                            @if (response.ResponseBody == null || response.ResponseBody == "")
+                            {
+
+                                <p style="margin:0;font-size:smaller; font-style:italic; color:#645454">No message was included by the sender</p>
+                            }
+                            else
+                            {@Html.DisplayFor(p => response.ResponseBody)}
+
+                            <br />
+                        </div>
+
+                    </div>
+
+                }
+
+            }
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group row">
+                <div class="col-3">
+
+                </div>
+                <div class="col-8">
+                    <hr /><i>Submit a Response</i>
+                    <br /><br />
+                    @Html.TextAreaFor(m => m.SupportResponse.ResponseBody, htmlAttributes: new { id = "textarea", rows = "6", cols = "58" })
+                </div>
+                <span asp-validation-for="@Model.SupportRequest.RequestBody" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group row">
+
+                <div class="col-3">
+                    <p style="margin:0; text-align:right">Update <label asp-for="@Model.SupportRequest.Status" class="col-form-label"></label>:</p>
+                </div>
+
+                <div class="col-2">
+                    @if (Model.SupportRequest.Status == SD.StatusClosed)
+                    {
+                        <select id="ddlContentType" style="background:#f7ded0" required asp-for="@Model.SupportRequest.Status" data-val-required="Update Status" asp-items="new SelectList(Model.Statuses)" class="form-control"></select>
+                    }
+                    else
+                    {
+                        <select id="ddlContentType" style="background:#e5f6de" required asp-for="@Model.SupportRequest.Status" data-val-required="Update Status" asp-items="new SelectList(Model.Statuses)" class="form-control"></select>
+
+                    }
+                </div>
+
+            </div>
+
+            <div class="form-group row" style="padding-top:30px">
+                <div class="col-3 offset-5">
+                    @*<partial name="_ReplyAndBackToListPartial" model="@Model" />*@
+
+
+                    <div class="row">
+                        <div class="col-6">
+
+                            <input type="submit" class="btn btn-success form-control" value="Submit" />
+
+                        </div>
+                        <div class="col-6">
+                            @if (User.IsInRole(SD.Learner))
+                            {
+                                <a asp-action="MySupportOpen" asp-controller="Support" class="btn btn-info form-control">Cancel</a>
+                            }
+                            else
+                            {
+                            <a asp-action="SupportRequestList" asp-route-id="@Model.SupportRequest.ClassId" class="btn btn-info form-control">Cancel</a>}
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+
+
+
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+}

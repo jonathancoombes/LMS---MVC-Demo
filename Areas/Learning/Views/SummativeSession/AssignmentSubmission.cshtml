@@ -1,0 +1,203 @@
+﻿@using LMS.Models.ViewModels
+@using LMS.Utility
+@model SummativeSubmissionViewModel
+@{
+    ViewData["Title"] = "AssigmentSubmission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="toolbar" class="row text-center container-fluid col-xl-12 backgroundWhite" style="width: 100%;font-size:0.9em; ">
+
+    <div class="" style="margin:0 auto;padding:15px; min-width:50%">
+        <h1 style="color:#2372ad">Summative Assignment Submission Information</h1>
+
+        <table class="table table-striped border">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(p => p.Assignment.Description)
+
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => p.Assignment.SubmissionRequirements)
+
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => p.SubmissionValidity.Close)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(p => p.Assignment.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(p => p.Assignment.SubmissionRequirements)
+                    </td>
+                    <td>
+                        @if((Model.SubmissionValidity.Close != null ) && Model.SubmissionValidity.Close > DateTime.Now)
+                        {
+                            @Html.DisplayFor(p => p.SubmissionValidity.Close)}
+                        else {
+                        <p style="font-weight:700; color:#d15e0c">CLOSED</p> 
+                        }
+                        </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+        @if (Model.SummativeSubmission != null && Model.SummativeSubmission.AssignmentSubmission != null)
+        {
+            <hr />
+            <h4 style="font-size:x-large; padding-top:0px;font-weight:600; padding-bottom:30px;color:#2372ad">Current Submission Information</h4>
+            @*<p style="border-radius:55px; display:inline;width:20px;background:#2372ad; padding-right:13px; padding-left:13px; font-size: xx-large; padding-top:25px; padding-bottom:25px; border:#b6d5eb 6px double ;color:#fafafa">@Model.FinalGrade%</p><br /><br /><br />*@
+            <table class="table table-striped border">
+                <tr>
+                    <th>
+                        Submission Received
+                    </th>
+                    <th>
+                        File Name
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        YES
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m.SummativeSubmission.AssignmentSubmission)
+
+                    </td>
+                    <td>
+                        @if (Model.SubmissionValidity.Close > DateTime.Now && Model.SummativeSubmission.GradePercentage == null)
+                        {
+                            <button style="width: 130px;" class="btn-danger text-light" id="delete">
+                                <i class="far fa-trash-alt"></i> &nbsp; DELETE FILE
+                            </button>
+                        }
+                        else { <p>NONE POSSIBLE</p>}
+                    
+                                    </td>
+                </tr>
+
+            </table>
+
+            <div class="form-group row">
+                <div class="col-5 offset-3">
+                    <div class="row">
+
+                        <div class="col-12">
+                            <button style="width: 130px;" class="btn-info text-light" name="continue" id="continue" onclick="location.href='@Url.Action( "ViewAllSummative","SummativeSession", new { Id = Model.UnitId})';return false;">
+                                <i class="fas fa-arrow-left"></i>  GO BACK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.SummativeSubmission == null || Model.SummativeSubmission.AssignmentSubmission == null)
+        {
+            <hr />
+            <h4 style="font-size:x-large; padding-top:0px;font-weight:600; padding-bottom:30px;color:#2372ad">Assignment Submission</h4>
+            @*<p style="border-radius:55px; display:inline;width:20px;background:#2372ad; padding-right:13px; padding-left:13px; font-size: xx-large; padding-top:25px; padding-bottom:25px; border:#b6d5eb 6px double ;color:#fafafa">@Model.FinalGrade%</p><br /><br /><br />*@
+
+    <form method="post" asp-action="SubmitAssignment" enctype="multipart/form-data">
+
+        <input type="hidden" asp-for="@Model.SummativeSubmission.Id" name="subId" />
+        <input type="hidden" asp-for="@Model.SummativeSubmission.SummativeSessionId" name="sesId" />
+        <input type="hidden" asp-for="@Model.Assignment.Id" name="assignId" />
+       
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div id="PDF" class="content PDF form-group row text-center" style="margin:0 auto; padding-bottom:30px;">
+
+            <div class="col-2" style="margin:0 auto">
+                <label asp-for="@Model.SummativeSubmission.AssignmentSubmission" class="col-form-label"></label>
+            </div>
+            <div class="col-9" style="margin:0 auto; ">
+                <input type="file" name="files" required accept="application/pdf" class="form-control border-0 " style="background:none" />
+            </div>
+            <span asp-validation-for="SummativeSubmission.AssignmentSubmission" class="text-danger"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-5 offset-3">
+                <div class="row">
+                    <div class="col-6">
+                        <input type="submit" class="btn btn-success form-control" value="Submit" />
+                    </div>
+                    <div class="col-6">
+                        <button style="width: 130px;" class="btn-danger text-light" name="continue" id="continue" onclick="location.href='@Url.Action("ViewAllSummative", "SummativeSession", new { Id = Model.UnitId })';return false;">
+                            CANCEL
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+        }
+
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+
+
+    <script type="text/javascript">
+
+                $('#delete').on('click', function () {
+                bootbox.confirm({
+                    title: "Permanently Delete Submission?",
+                    message: "<strong>Are you sure ?</strong> <br>This action cannot be undone!",
+                    buttons: {
+                        cancel: {
+                            label: '<i class="fa fa-times"></i> Cancel',
+                            className: 'btn-success',
+                            size: 'large'
+
+                        },
+                        confirm: {
+                            label: '<i class="fa fa-check"></i> Delete Assignment',
+                            className: 'btn-danger',
+                            size: 'large'
+
+                        }
+                    },
+                    callback: function (result) {
+                        if (result === true) {
+
+                           deleteAssignment();
+
+                        }
+                    }
+                });
+       });
+                                            
+        function deleteAssignment() {
+                   window.location.href = '@Url.Action("DeleteAssignment", "SummativeSession", new {subId = Model.SummativeSubmission.Id})';
+        };
+    </script>
+
+
+
+
+
+
+
+}
+

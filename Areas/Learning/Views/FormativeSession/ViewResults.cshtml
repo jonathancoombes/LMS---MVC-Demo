@@ -1,0 +1,161 @@
+﻿@using LMS.Models.ViewModels
+@using LMS.Utility
+@model FormativeSubmissionViewModel
+@{
+    ViewData["Title"] = "ViewResults";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div id="toolbar" class="row text-center container-fluid col-xl-12 backgroundWhite" style="width: 100%;font-size:0.9em; ">
+
+    
+
+    <div class="" style="margin:0 auto;padding:15px;">
+        <h1 style="color:#2372ad">Formative Results Review</h1>
+        <h4 style="font-size:x-large; padding-top:0px;font-weight:600; padding-bottom:30px;color:#2372ad">PERCENTAGE ACHIEVED</h4> <p style="border-radius:55px; display:inline;width:20px;background:#2372ad; padding-right:13px; padding-left:13px; font-size: xx-large; padding-top:25px; padding-bottom:25px; border:#b6d5eb 6px double ;color:#fafafa">@Model.FinalGrade%</p><br /><br /><br />
+
+
+        @if (Model.FormList.Count() > 0)
+        {
+            var i = 0;
+            foreach (var form in Model.FormList)
+            {
+                i++;
+                foreach (var sub in Model.SubList)
+                {
+
+                    if (sub.FormativeId == form.Id)
+                    {
+                        if (form.QuestionType == SD.TrueFalse)
+                        {
+    <div class="text-lg-left pTight" style="background:#fafafa!important; border:1px solid #aaa4a4; padding:20px;">
+        <p style="font-size:larger;font-weight:600;background:#f6f3e6;border-bottom:1px solid #bfbfbf ;">@i.ToString(). Question: @form.TrueFalse.Question </p>
+
+        @if (sub.TFAnswer == "False" && sub.Result == SD.Competent)
+        {
+            <p class="col-form-label-sm" style="font-weight: 600;background:#c9ebcb">Correct Answer: FALSE <i class="far fa-check-circle"></i> CORRECT!</p>
+            <p class="col-form-label-sm">Incorrect Answer: TRUE</p>
+        }
+        else if (sub.TFAnswer == "True" && sub.Result == SD.Competent)
+        {
+            <p class="col-form-label-sm" style="font-weight: 600;background:#c9ebcb">Correct Answer: TRUE <i class="far fa-check-circle"></i> CORRECT!</p>
+            <p class="col-form-label-sm">Incorrect Answer: FALSE</p>
+        }
+        @if (sub.TFAnswer == "False" && sub.Result == SD.NotYetCompetent)
+        {
+            <p class="col-form-label-sm" style="font-weight: 600;background:#f7b69a">Incorrect Answer: FALSE <i class="far fa-times-circle"></i> INCORRECT!</p>
+             <p class="col-form-label-sm" style="background:#c9ebcb">Correct Answer: TRUE</p>
+        }
+        else if (sub.TFAnswer == "True" && sub.Result == SD.NotYetCompetent)
+        {
+            <p class="col-form-label-sm" style="font-weight: 600;background:#f7b69a">Incorrect Answer: TRUE <i class="far fa-times-circle"></i> INCORRECT!</p>
+            <p class="col-form-label-sm" style="background:#c9ebcb">Correct Answer: FALSE</p>
+        }
+    </div><br />
+                        }
+                        else if (form.QuestionType == SD.MultipleChoice)
+                        {
+    <div class="text-lg-left pTight" style="background:#fafafa!important; border:1px solid #aaa4a4; padding:20px;">
+        <p style="font-size:larger;font-weight:600; border-bottom:1px solid #bfbfbf ;background:#f6f3e6">@i.ToString(). Question: @form.MultipleChoice.Question </p>
+
+        @if (sub.MCAnswer == "A" && sub.Result == SD.Competent)
+        {
+
+            <p class="col-form-label-sm" style="font-weight: 600;background:#c9ebcb">A) @form.MultipleChoice.AnswerA - <i class="far fa-check-circle"></i>CORRECT!</p>
+            <p class="col-form-label-sm">B) @form.MultipleChoice.AnswerB</p>
+            <p class="col-form-label-sm">C) @form.MultipleChoice.AnswerC</p>
+            <p class="col-form-label-sm">D) @form.MultipleChoice.AnswerD</p>
+        }
+        else if (sub.MCAnswer == "A" && sub.Result == SD.NotYetCompetent)
+        {
+
+            <p class="col-form-label-sm" style="font-weight: 600;background:#f7b69a">A) @form.MultipleChoice.AnswerA <i class="far fa-times-circle"></i> INCORRECT!</p>
+            <p class="col-form-label-sm">B) @form.MultipleChoice.AnswerB</p>
+            <p class="col-form-label-sm">C) @form.MultipleChoice.AnswerC</p>
+            <p class="col-form-label-sm">D) @form.MultipleChoice.AnswerD</p>
+            <p style="border-top:1px solid #bfbfbf;background:#c9ebcb">Correct Answer: @form.MultipleChoice.CorrectAnswer</p>
+        }
+        @if (sub.MCAnswer == "B" && sub.Result == SD.Competent)
+        {
+
+            <p class="col-form-label-sm">A) @form.MultipleChoice.AnswerA</p>
+            <p class="col-form-label-sm" style="font-weight: 600;background:#c9ebcb">B) @form.MultipleChoice.AnswerB <i class="far fa-check-circle"></i> CORRECT!</p>
+            <p class="col-form-label-sm">C) @form.MultipleChoice.AnswerC</p>
+            <p class="col-form-label-sm">D) @form.MultipleChoice.AnswerD</p>
+        }
+        else if (sub.MCAnswer == "B" && sub.Result == SD.NotYetCompetent)
+        {
+
+            <p class="col-form-label-sm">A) @form.MultipleChoice.AnswerA</p>
+            <p class="col-form-label-sm" style="font-weight: 600;background:#f7b69a">B) @form.MultipleChoice.AnswerB <i class="far fa-times-circle"></i> INCORRECT!</p>
+            <p class="col-form-label-sm">C) @form.MultipleChoice.AnswerC</p>
+            <p class="col-form-label-sm">D) @form.MultipleChoice.AnswerD</p>
+            <p style="border-top:1px solid #bfbfbf;background:#c9ebcb">Correct Answer: @form.MultipleChoice.CorrectAnswer</p>
+        }
+        @if (sub.MCAnswer == "C" && sub.Result == SD.Competent)
+        {
+
+            <p class="col-form-label-sm bg-secondary">A) @form.MultipleChoice.AnswerA</p>
+            <p class="col-form-label-sm bg-secondary">B) @form.MultipleChoice.AnswerB</p>
+            <p class="col-form-label-sm" style="font-weight: 600;background:#c9ebcb">C) @form.MultipleChoice.AnswerC <i class="far fa-check-circle"></i> CORRECT!</p>
+            <p class="col-form-label-sm bg-secondary">D) @form.MultipleChoice.AnswerD</p>
+        }
+        else if (sub.MCAnswer == "C" && sub.Result == SD.NotYetCompetent)
+        {
+
+            <p class="col-form-label-sm">A) @form.MultipleChoice.AnswerA</p>
+            <p class="col-form-label-sm">B) @form.MultipleChoice.AnswerB</p>
+            <p class="col-form-label-sm" style="font-weight: 600;background:#f7b69a">C) @form.MultipleChoice.AnswerC <i class="far fa-times-circle"></i> INCORRECT!</p>
+            <p class="col-form-label-sm">D) @form.MultipleChoice.AnswerD</p>
+            <p style="border-top:1px solid #bfbfbf;background:#c9ebcb">Correct Answer: @form.MultipleChoice.CorrectAnswer</p>
+        }
+        @if (sub.MCAnswer == "D" && sub.Result == SD.Competent)
+        {
+
+            <p class="col-form-label-sm">A) @form.MultipleChoice.AnswerA</p>
+            <p class="col-form-label-sm">B) @form.MultipleChoice.AnswerB</p>
+            <p class="col-form-label-sm">C) @form.MultipleChoice.AnswerC</p>
+            <p class="col-form-label-sm" style="font-weight: 600;background:#c9ebcb">D) @form.MultipleChoice.AnswerD <i class="far fa-check-circle"></i> CORRECT!</p>
+        }
+        else if (sub.MCAnswer == "D" && sub.Result == SD.NotYetCompetent)
+        {
+
+            <p class="col-form-label-sm">A) @form.MultipleChoice.AnswerA</p>
+            <p class="col-form-label-sm">B) @form.MultipleChoice.AnswerB</p>
+            <p class="col-form-label-sm">C) @form.MultipleChoice.AnswerC</p>
+            <p class="col-form-label-sm" style="font-weight: 600;background:#f7b69a">D) @form.MultipleChoice.AnswerD <i class="far fa-times-circle"></i> INCORRECT!</p>
+            <p style="border-top:1px solid #bfbfbf;background:#c9ebcb">Correct Answer: @form.MultipleChoice.CorrectAnswer</p>
+
+        }
+
+
+    </div><br />
+                        }
+
+                    }
+                }
+
+
+            }
+
+
+
+        }
+        else
+        {
+
+            <p>No results are aavailable</p>
+        }
+    </div>
+
+    <div class="col-12 float-lg-right">
+        <button style="width: 170px;" class="btn-success text-light" name="continue" id="continue" onclick="location.href='@Url.Action( "ContentOutline","CourseOutline")';return false;">
+            <i class="fas fa-arrow-left"></i> &nbsp; GO BACK
+        </button>
+        <br /><br />
+    </div>
+
+</div>

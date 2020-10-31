@@ -1,0 +1,165 @@
+﻿@using LMS.Utility
+@model LMS.Models.ViewModels.CourseUnitTopicViewModel
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var msize = "col-12";
+    @if (@Model.CourseTopic.ContentType == SD.ContentPDF)
+    { msize = "col-9 border-right"; }
+}
+
+<br />
+<h2 class="text-info">Edit Course Topic</h2>
+<br />
+<div class="border backgroundWhite row">
+
+
+    <div class="@msize">
+
+        <h4 class="text-black-50">Editing Topic: @Model.CourseTopic.Name</h4>
+        <br />
+        <form method="post" asp-action="Edit" enctype="multipart/form-data">
+
+            <!--To Jquery-->
+            <input type="hidden" value="@Model.CourseTopic.CourseUnitId" id="unitId" name="unitId" />
+            <input type="hidden" value="@Model.CourseTopic.Id" id="topicId" name="topicId" />
+            <input type="hidden" value="@Model.CourseTopic.FAOrder" id="faOrder" name="faOrder" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.CourseTopic.Name" class="col-form-label"></label>
+                </div>
+
+                <div class="col-6">
+
+                    <input asp-for="@Model.CourseTopic.Name" class="form-control" />
+
+                </div>
+                <span asp-validation-for="@Model.CourseTopic.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.CourseTopic.Reference" class="col-form-label"></label>
+                </div>
+
+                <div class="col-3">
+
+                    <input asp-for="@Model.CourseTopic.Reference" class="form-control" />
+
+                </div>
+
+            </div>
+
+            @if (@Model.CourseTopic.ContentType == SD.ContentCustom)
+            {
+
+                <div id="Custom" class="content Custom form-group row">
+                     <div class="col-12">
+                        @Html.TextAreaFor(m => m.CourseTopic.CustomContent, htmlAttributes: new { id = "texta" })
+                    </div>
+                    <span asp-validation-for="CourseTopic.CustomContent" class="text-danger"></span>
+                </div>
+                <input type="hidden" asp-for="@Model.CourseTopic.ContentType" value="@SD.ContentCustom" name="contentType" />
+
+
+            }
+            else if (@Model.CourseTopic.ContentType == SD.ContentPDF)
+            {
+                <div id="PDF" class="content PDF form-group row">
+
+                    <div class="col-2">
+                        <label asp-for="CourseTopic.PDFContent" class="col-form-label"></label>
+                    </div>
+
+                    <div class="col-5">
+                        <input asp-for="CourseTopic.PDFContent" type="file" value="CourseTopic.PDFContent" name="files" class="form-control border-0" />
+                    </div>
+                    <input type="hidden" asp-for="@Model.CourseTopic.ContentType" value="@SD.ContentPDF" name="contentType" />
+
+                </div>
+
+
+            }
+
+
+            <div class="form-group row" style="padding-top:50px">
+                <div class="col-5 offset-3">
+                    <partial name="_EditTopicAndBackToListPartial" model="@Model" />
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+    @if (@Model.CourseTopic.ContentType == SD.ContentPDF)
+    {
+        <div style="position:relative" class="col-2">
+            <div style="position:relative" class="text-center">
+                <P class="text-black-50" style="text-align:center"> Current File Preview</P>
+                <canvas style="position:relative" id="myCanvas"></canvas>
+            </div>
+        </div>}
+
+
+</div>
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @using LMS.Support
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+   
+                tinymce.init({
+                    selector: '#texta',
+                    plugins: 'preview tinydrive image link media table wordcount ',
+                    toolbar: ' undo redo | preview | insertfile | link image media | formatselect | bold italic forecolor backcolor formatpainter | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent',
+                    height: 800,
+                    // Tiny Drive specific options for more details on what these does check https://www.tiny.cloud/docs/plugins/drive/
+                    tinydrive_token_provider: '/Course/CourseTopic/jwt',  media_live_embeds: true
+
+                    // tinydrive_upload_path: '/uploads',
+                    // tinydrive_max_image_dimension: 1024
+                });
+
+            });
+
+    </script>
+    <script src="~/js/pdf.js"></script>
+
+    <script type="text/javascript">
+
+                    function makeThumb(page)
+                    {
+                        // draw page to fit into 96x96 canvas
+                        var vp = page.getViewport(0.5);
+                        canvas = document.getElementById('myCanvas');
+                        canvas.width = 220;
+                        canvas.height = 240;
+                        var scale = Math.min(canvas.width / vp.width, canvas.height / vp.height);
+                        return page.render({ canvasContext: canvas.getContext("2d"), viewport: page.getViewport(scale)}).promise.then(function() {
+                        return canvas;
+                    });
+                }
+
+                pdfjsLib.getDocument("http://localhost/topicfiles/" + "@Model.CourseTopic.Id" + ".pdf").promise.then(function(doc) {
+
+                        // create a div for each page and build a small canvas for it
+
+                        return doc.getPage(1).then(makeThumb)
+
+                }).catch (console.error);
+
+
+
+    </script>
+
+
+
+}

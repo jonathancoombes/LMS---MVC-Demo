@@ -1,0 +1,143 @@
+﻿@model LMS.Models.ViewModels.CourseViewModel
+@using LMS.Extentions
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-info">Create Course</h2>
+<br />
+
+<form method="post" enctype="multipart/form-data">
+
+    <div class="border backgroundWhite">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group row">
+
+            <div class="col-2">
+                <label asp-for="Course.Name" class="col-form-label"></label>
+            </div>
+
+            <div class="col-5">
+                <input asp-for="Course.Name" class="form-control" />
+            </div>
+            <span asp-validation-for="Course.Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Course.Description" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                @Html.TextAreaFor(m => m.Course.Description, htmlAttributes: new { id = "textarea", rows = "6", cols = "56" })
+            </div>
+            <span asp-validation-for="Course.Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Course.CategoryId" class="col-form-label"></label>
+            </div>
+            <div class="col-4">
+                <select asp-for="@Model.Course.CategoryId" id="CategoryId" asp-items="@Model.Category.ToSelectLisItem(Model.Course.CategoryId)" class="form-control"> </select>
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Course.SubCategoryId" class="col-form-label"></label>
+            </div>
+            <div class="col-4">
+                <select asp-for="@Model.Course.SubCategoryId" name="SubCategoryId" id="SubCategoryId" asp-items="@( new SelectList(string.Empty, "Id", "Name"))" class="form-control"> </select>
+            </div>
+
+        </div>
+        <div class="form-group row">
+
+            <div class="col-2">
+                <label asp-for="Course.Image" class="col-form-label"></label>
+            </div>
+
+            <div class="col-3">
+                <input type="file" name="files" multiple class="form-control border-0" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Course.Reference" class="col-form-label"></label>
+            </div>
+            <div class="col-2">
+                <input asp-for="Course.Reference" class="form-control" />
+            </div>
+            <span asp-validation-for="Course.Reference" class="text-danger"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Course.Duration" class="col-form-label"></label>
+            </div>
+            <div class="col-2">
+                <input asp-for="Course.Duration" class="form-control" />
+            </div>
+            <span asp-validation-for="Course.Duration" class="text-danger"></span>
+        </div>
+
+
+
+        <div class="form-group row">
+            <div class="col-5 offset-2">
+                <partial name="_CreateAndBackToListButton" />
+            </div>
+        </div>
+
+    </div>
+
+</form>
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        getSubcategory();
+
+        $('#CategoryId').change(function () {
+            getSubcategory();
+        });
+
+    });
+
+    function getSubcategory() {
+
+        var url = '@Url.Content("~/")' + "Course/SubCategory/GetSubCategories";
+        var ddlsource = '#CategoryId';
+
+        $.getJSON(
+            url,
+            { id: $(ddlsource).val() },
+            function (data) {
+
+                var items = '';
+                $('#SubCategoryId').empty();
+                $.each(data, function (i, subcategory) {
+                    items += "<option value='" + subcategory.value + "'>" + subcategory.text + "</option>";
+                });
+
+                $('#SubCategoryId').html(items);
+
+            });
+    }
+
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}

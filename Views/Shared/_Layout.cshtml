@@ -1,0 +1,199 @@
+﻿@using LMS.Utility
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LMS</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/css/cerulean-bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/all.css" />
+        <link rel="stylesheet" href="~/css/datepicker.min.css" />
+
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/css/cerulean-bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+              crossorigin="anonymous"
+              integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
+    </environment>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/datepicker.min.css" />
+</head>
+<body class="search-background">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-toggleable-lg border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="Learner" asp-controller="Home" asp-action="Index">LMS</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+                    <ul class="navbar-nav flex-grow-1">
+
+
+
+
+                        @if (User.IsInRole(SD.Designer) || User.IsInRole(SD.Administrator))
+                        {
+                            <li class="nav-item dropdown text-black-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuCD" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Design
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDesigner">
+
+                                    @if (User.IsInRole(SD.Administrator))
+                                    {
+                                        <a class="dropdown-item" asp-action="ConfigOptions" asp-controller="Config" asp-area="Admin"><i class="fas fa-cogs"></i>&nbsp; Configuration</a>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="Category" asp-area="Course"><i class="fas fa-th-list"></i> &nbsp; Categories</a>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="Course" asp-area="Course"><i class="fas fa-chalkboard"></i> &nbsp; Courses</a>
+                                    }
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="CourseModule" asp-area="Course"><i class="fas fa-stream"></i> &nbsp; Modules</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="CourseUnit" asp-area="Course"><i class="fab fa-leanpub"></i> &nbsp; Content | Assessment </a>
+                                </div>
+                            </li>
+                        }
+                        @if (User.IsInRole(SD.Facilitator) || User.IsInRole(SD.Assessor) || User.IsInRole(SD.Administrator))
+                        {
+                            <li class="nav-item dropdown text-black-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuCA" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Manage
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarAdministrator">
+                                    @if (User.IsInRole(SD.Facilitator) || User.IsInRole(SD.Administrator))
+                                    {
+                                        <a class="dropdown-item" asp-action="ClassList" asp-controller="Class" asp-area="Learning"><i class="fas fa-school"></i> &nbsp;Classes | Enrolment</a>
+                                    }
+                                    <a class="dropdown-item" asp-action="ClassList" asp-controller="Support" asp-area="Support"><i class="fas fa-envelope-square"></i> &nbsp; Support Requests</a>
+                                    @if (User.IsInRole(SD.Assessor))
+                                    {
+                                        <a class="dropdown-item" asp-action="AssessorClassList" asp-controller="Assessment" asp-area="Learning"><i class="fas fa-book"></i> &nbsp; Assessments Grading</a>
+                                    }
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="Assessment" asp-area="Course"><i class="fas fa-newspaper"></i> &nbsp;View Reports</a>
+
+                                </div>
+                            </li>
+                        }
+                        @if (User.IsInRole(SD.Facilitator) || User.IsInRole(SD.Assessor) || User.IsInRole(SD.Administrator))
+                        {
+                            <li class="nav-item dropdown text-black-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuUM" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Users
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarUser">
+                                    <a class="dropdown-item" asp-action="Learners" asp-controller="User" asp-area="Admin"><i class="fas fa-user-graduate"></i> &nbsp; Learners</a>
+                                    @if (User.IsInRole(SD.Administrator))
+                                    {
+
+                                        <a class="dropdown-item" asp-action="Designers" asp-controller="User" asp-area="Admin"><i class="fas fa-user-tie"></i> &nbsp; Designers</a>
+                                        <a class="dropdown-item" asp-action="Assessors" asp-controller="User" asp-area="Admin"><i class="fas fa-user-tag"></i> &nbsp;Assessors</a>
+                                        <a class="dropdown-item" asp-action="Facilitators" asp-controller="User" asp-area="Admin"><i class="fas fa-chalkboard-teacher"></i> &nbsp;Facilitators</a>
+                                        <a class="dropdown-item" asp-action="Admins" asp-controller="User" asp-area="Admin"><i class="fas fa-user-shield"></i> &nbsp;Administrators</a>
+                                    }
+                                </div>
+                            </li>
+                        }
+                        @if (User.IsInRole(SD.Learner))
+                        {
+                            <li class="nav-item dropdown text-black-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuUM" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-school"></i> &nbsp;Control Panel
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarUser">
+                                    <a class="dropdown-item" asp-action="LearnerClasses" asp-controller="ClassEnrolment" asp-area="Learning"><i class="fas fa-chalkboard"></i> &nbsp;My Courses</a>
+                                    <a class="dropdown-item" asp-action="MySupportOpen" asp-controller="Support" asp-area="Support"><i class="fas fa-envelope-square"></i> &nbsp; My Support</a>
+
+                                </div>
+                            </li>
+                        }
+                        @if ((User.IsInRole(SD.Learner))
+                          && currentUser.ActiveClassId != null)
+                        {
+                            <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuUM" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-chalkboard-teacher"></i> &nbsp;Learning Portal
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarUser">
+                                    <a class="dropdown-item" id="navbarDropDownMenuCA" asp-action="Classroom" asp-controller="Home" asp-area="Learning"><i class="fas fa-chalkboard"></i> &nbsp;Classroom</a>
+                                    <a class="dropdown-item" id="navbarDropDownMenuCA" asp-action="ContentOutline" asp-controller="CourseOutline" asp-area="Learning"><i class="fas fa-book-reader"></i> &nbsp;Course Outline</a>
+
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2019 - LEARNING MANAGEMENT SYSTEM - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <environment include="Development">
+
+
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/js/bootbox.all.min.js"></script>
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+
+        <script src="https://cdn.tiny.cloud/1/pr7bat7qozufiq9zdsahddt74djvozj4460q8mz2w4en5e6t/tinymce/5/tinymce.min.js"></script>
+
+
+    </environment>
+    <environment exclude="Development">
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha256-E/V4cWE4qvAeO5MOhjtGtqDzPndRO1LBk8lJ/PR7CA4=">
+        </script>
+
+
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    </environment>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+
+
+    <script src="https://cdn.tiny.cloud/1/pr7bat7qozufiq9zdsahddt74djvozj4460q8mz2w4en5e6t/tinymce/5/tinymce.min.js"></script>
+    <script src="~/js/bootbox.all.min.js"></script>
+
+
+    @await Component.InvokeAsync("NToastNotify")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

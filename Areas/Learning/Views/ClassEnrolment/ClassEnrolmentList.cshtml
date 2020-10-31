@@ -1,0 +1,86 @@
+﻿@using LMS.Utility
+@model LMS.Models.ViewModels.ClassEnrolmentViewModel
+@{
+    ViewData["Title"] = "ClassEnrolmentList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Class Enrolment List</h2>
+        </div>
+        <div class="col-6 text-right">
+
+            <p>
+                <a asp-action="EnrolLearner" asp-route-id="@Model.Class.Id" class="btn btn-success"><i class="fas fa-plus"></i> &nbsp; Enrol Learner</a>
+                <a asp-action="EnrolFacilitator" asp-route-id="@Model.Class.Id" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp; Enrol Facilitator</a>
+                <a asp-action="EnrolAssessor" asp-route-id="@Model.Class.Id" class="btn btn-warning"><i class="fas fa-plus"></i> &nbsp; Enrol Assessor</a>
+            </p>
+
+        </div>
+    </div>
+
+    <br />
+    <div>
+        @if (Model.ClassEnrolments.Count() > 0)
+        {
+        <table class="table table-striped border">
+
+            <tr class="table-secondary">
+                <th style="width:11%">
+                    @Html.DisplayNameFor(m => m.ClassEnrolment.UserName)
+                </th>
+                <th style="width:11%">
+                    @Html.DisplayNameFor(m => m.ClassEnrolment.UserSurname)
+                </th>
+                <th style="width:5%;text-align:center">
+                    @Html.DisplayNameFor(m => m.ClassEnrolment.Identity)
+                </th>
+                <th style="width:7%;text-align:center">
+                    @Html.DisplayNameFor(m => m.ClassEnrolment.UserRole)
+                </th>
+                <th style="width:11%;text-align:center">
+                    @Html.DisplayNameFor(m => m.ClassEnrolment.EnrolmentDate)
+                </th>
+                <th style="width:4%; text-align:center">Actions</th>
+
+            </tr>
+            @foreach (var item in Model.ClassEnrolments)
+            {
+            <tr>
+            <td>
+                @Html.DisplayFor(m => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.UserSurname)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(m => item.Identity)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(m => item.UserRole)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.EnrolmentDate)
+            </td>
+            <partial name="_EnrolTableButtonPartial" model="item.Id" />
+
+        </tr>
+        }
+
+        </table>
+        }
+        else
+        {
+        <h3>No Enrolments Exists for this Class</h3>
+        }
+    </div>
+
+</div>
+
+
+

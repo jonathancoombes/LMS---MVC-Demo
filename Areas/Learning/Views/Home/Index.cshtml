@@ -1,0 +1,111 @@
+﻿@using LMS.Support
+
+@{
+    ViewData["Title"] = "Home Page";
+ 
+}
+    <script src="/js/pdf.js">
+    </script>
+    <div class="text-center">
+        <h1 class="display-4">Welcome to the LMS</h1>
+
+        <div class="row" container-fluid>
+
+            <div class="col-sm-12 container-fluid" id="the-container">
+                <canvas id="the-canvas" style="border: 1px solid #bababa;"></canvas>
+            </div>
+        </div>        
+        
+      
+
+
+
+
+
+        <script>
+
+            window.onresize = function(){ location.reload(); }
+
+            //Serializes the object for use in js
+            var pirates = @JavaScriptConvert.SerializeObject(1);
+            
+
+
+        pdfjsLib.getDocument('Germany.pdf').then(doc => {
+            doc.getPage(pirates).then(page => {
+                var container = document.getElementById('the-container');
+        var canvas = document.getElementById('the-canvas');
+        var context = canvas.getContext('2d');
+
+        var viewport = page.getViewport(1.1);
+        var scale = container.clientWidth / viewport.width;
+        viewport = page.getViewport(scale);
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+         page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    });
+
+            });
+        });
+
+
+
+        </script>
+
+
+
+
+
+        @*Backup Copy*@
+
+        @*<script src="/js/pdf.js"></script>
+        <div class="text-center">
+            <h1 class="display-4">Welcome to the LMS</h1>
+            <canvas id="myCanvas"></canvas>*@
+
+
+
+        @*@{
+            var page = new Lesson { };
+            var pagenum = page.LessonPosition;
+        }*@
+
+
+        @*<script>
+            //Serializes the object for use in js
+            var pirates = @JavaScriptConvert.SerializeObject(1);
+
+
+        pdfjsLib.getDocument('WelcomePage.pdf').then(doc => {
+            doc.getPage(pirates).then(page => {
+                var myCanvas = document.getElementById("myCanvas");
+                var context = myCanvas.getContext("2d");
+
+                var viewport = page.getViewport(1.5);
+                myCanvas.width = viewport.width;
+                myCanvas.height = viewport.height;
+
+                page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                });
+
+            });
+        });
+        </script>*@
+
+
+
+
+
+
+
+
+
+    </div>
+
+

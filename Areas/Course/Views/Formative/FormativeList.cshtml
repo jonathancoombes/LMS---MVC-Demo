@@ -1,0 +1,112 @@
+﻿@using static LMS.Extentions.OrderList
+@model LMS.Models.ViewModels.FormativeViewModel
+@{
+    ViewData["Title"] = "FormativeList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">Topic Formative List</h2>
+            <br />
+
+        </div>
+        <div class="col-6 text-right">
+            @if (Model.CanDelete)
+            {
+                <!--Renders a partial view-->
+                <partial name="_CreateTopicFAButtonPartial" model="Model.CourseTopic.Id" />
+            }
+            </div>
+
+    </div>
+
+    <br />
+    <div>
+        @if (Model.FormativeList.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tbody>
+
+                <thead>
+                    <tr class="table-warning table-sm">
+                        <td colspan="6" cellpadding="4">
+                            Topic: @Model.CourseTopic.Name
+                        </td>
+                    </tr>
+                    <tr class="table-striped">
+
+                        <th style="width:70%">@Html.DisplayNameFor(m => m.FormativeList)</th>
+
+                        <th>@Html.DisplayNameFor(m => m.Formative.Reference)</th>
+                        <th style="text-align: center">@Html.DisplayNameFor(m => m.Formative.QuestionType)</th>
+                        <th></th>
+                        <th>Actions</th>
+                        <th>Position</th>
+
+                    </tr>
+                </thead>
+                @foreach (var form in Model.FormativeList)
+                {
+
+            <tr class="table-striped">
+
+                <td>
+                    @Html.DisplayFor(m => form.Title)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(m => form.Reference)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => form.QuestionType)
+                </td>
+                <td>
+                    
+                @if (Model.CanDelete)
+                {
+                    <partial name="_CanDeleteTableButtonPartial" model="form.Id" />
+
+                }
+                else
+                {
+                    <partial name="_CantDeleteTableButtonPartial" model="form.Id" />
+
+                }
+                    </td>
+                <td style="width:150px">
+                    @if (Model.CanDelete == true)
+                    {
+                        <div class="btn-group" role="group">
+
+                            <a class="btn btn-sm btn-primary text-white" asp-action="MoveFAUp" asp-route-Id="@form.Id">
+                                <i class="fas fa-chevron-up"></i>
+                            </a>
+                            <a class="btn btn-sm btn-danger text-white" asp-action="MoveFADown" asp-route-Id="@form.Id">
+                                <i class="fas fa-chevron-down"></i>
+                            </a>
+                        </div>}
+                    else
+                    {
+                        <p>FIXED</p>
+                    }
+                </td>
+            </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+            <p class="text-black-50">No Formatives Exists</p>
+        }
+    </div>
+
+</div>
+

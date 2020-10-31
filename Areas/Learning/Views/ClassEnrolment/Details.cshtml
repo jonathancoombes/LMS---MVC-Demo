@@ -1,0 +1,114 @@
+﻿@using LMS.Extentions
+@using LMS.Utility
+@model LMS.Models.ClassEnrolment
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+}
+
+<br />
+<h2 class="text-info">Enrolment Information</h2>
+<br />
+
+<form method="post" asp-action="Delete">
+
+    <div class="border backgroundWhite">
+        <H4>User Enrolment Details</H4>
+        <br />
+
+        <div class="form-group row">
+            <div class="col-2">
+                User:
+            </div>
+            <div class="col-5">
+                @Model.UserName @Model.UserSurname
+
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-2">
+                Identity:
+            </div>
+            <div class="col-5">
+                @Model.Identity
+            </div>
+        </div>
+          <div class="form-group row">
+            <div class="col-2">
+                Role:
+            </div>
+            <div class="col-5">
+                @Model.UserRole
+            </div>
+        </div>
+        @if (Model.UserRole == SD.Learner)
+        {
+        <div class="form-group row">
+            <div class="col-2">
+                Study Progress
+            </div>
+            <div class="col-5">
+                The following study progress is achieved in this enrolment:
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-5 offset-2">
+                Topics Completed:  @if (Model.CompletedTopics != "" && Model.CompletedTopics != null)
+                {
+                    <p style="color:orangered; font-weight:bold">
+                        @OrderList.ItemIdOrder(Model.CompletedTopics).Count()
+                    </p> }
+                else
+                {<p style="color: teal; font-weight:bold">None</p>}
+            </div>
+            <div class="col-5 offset-2">
+                Units Completed:  @if (Model.CompletedUnits != "" && Model.CompletedUnits != null)
+                {
+                    <p style="color:orangered; font-weight:bold">
+                        @OrderList.ItemIdOrder(Model.CompletedUnits).Count()
+                    </p> }
+                else
+                {<p style="color: teal; font-weight:bold">None</p>}
+            </div>
+            <div class="col-5 offset-2">
+                Formatives Completed:  @if (Model.CompletedFas != "" && Model.CompletedFas != null)
+                {
+                    <p style="color:orangered; font-weight:bold">
+                        @OrderList.ItemIdOrder(Model.CompletedFas).Count()
+                    </p> }
+                else
+                {<p style="color: teal; font-weight:bold">None</p>}
+            </div>
+            <div class="col-5 offset-2">
+                Summatives Completed:  @if (Model.CompeletedSas != "" && Model.CompeletedSas != null)
+                {
+                    <p style="color:orangered; font-weight:bold">
+                        @OrderList.ItemIdOrder(Model.CompeletedSas).Count()
+                    </p> }
+                else
+                {<p style="color: teal; font-weight:bold">None</p>}
+            </div>
+        </div>}
+
+        <br />
+        <div class="form-group row">
+            <div class="col-5 offset-2">
+                <div class="row">
+                    <div class="col-6">
+                        <a asp-action="ClassEnrolmentList" asp-route-id="@Model.ClassId" class="btn btn-success form-control">Back to List</a>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+</form>
+
+

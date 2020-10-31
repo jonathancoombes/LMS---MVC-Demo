@@ -1,0 +1,222 @@
+﻿@using LMS.Utility
+@model LMS.Models.ViewModels.FormativeViewModel
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <script type="text/javascript">
+            $('.content').hide();
+            </script>
+<br />
+<h2 class="text-info">Create Formative</h2>
+<br />
+<div class="border backgroundWhite row">
+
+    <div class="col-12">
+
+        <h4 class="text-black-50">Adding Formative to: @Model.CourseTopic.Name</h4>
+        <br />
+        <form method="post" asp-action="Create">
+
+            <input type="hidden" asp-for="@Model.CourseTopic.Id" id="topId" />
+            <!--To Jquery-->
+            <input type="hidden" value="@Model.CourseTopic.Id" id="topId" name="topId" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.Formative.Title" class="col-form-label"></label>
+                </div>
+
+                <div class="col-6">
+
+                    <input asp-for="@Model.Formative.Title" class="form-control" />
+
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="@Model.Formative.Reference" class="col-form-label"></label>
+                </div>
+
+                <div class="col-3">
+
+                    <input asp-for="@Model.Formative.Reference" class="form-control" />
+
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+                <div class="col-2">
+                    <label asp-for="Formative.QuestionType" class="col-form-label"></label>
+                </div>
+
+                <div class="col-3">
+
+                    <select id="ddlContentType" required asp-for="Formative.QuestionType" data-val-required="Select the Question Type" asp-items="@(new SelectList(Model.QuestionType))" class="form-control"><option disabled selected hidden>Please select one</option></select>
+                </div>
+
+            </div>
+
+            <div id="Multiple-Choice" class="content form-group row" style="display:none; text-align:center">
+                <div class="col-2" style="text-align:left">
+                    @Html.Label("Question")
+                </div>
+                <div class="col-10" style="text-align:left">
+                    <P>Record the Multiple Choice Question Below:</P>
+                    @Html.TextAreaFor(m => m.Formative.MultipleChoice.Question, htmlAttributes: new { id = "texta", cols = "80", rows="5"  })
+                </div>
+
+                <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+
+                <div class="col-2" style="padding-left:15px;padding-right:15px">
+
+                    @Html.Label("Answer Options:") <hr style="height: 2px;border: 0;width:92%;box-shadow: 2px 3px 3px -3px #bababa inset;">
+                </div>
+                <div class="col-8" style="padding-left:55px;padding-right:55px">
+
+                    @Html.Label("Record the possible answer choices below for the question above:")<hr style="height: 2px;border: 0;width:100%;box-shadow: 2px 3px 3px -3px #bababa inset;">
+                </div>
+                <div class="col-2" style="padding-left:15px;padding-right:15px;">
+
+                    @Html.Label("Correct Answer:")<hr style="height: 2px;border: 0;width:92%;box-shadow: 2px 3px 3px -3px #bababa inset;">
+                </div>
+
+                <div class="col-2">
+                    @Html.Label("Answer Option " + SD.AnswerOptionA)
+                </div>
+                <div class="col-8">
+                    <input asp-for="@Model.Formative.MultipleChoice.AnswerA" class="form-control" />
+                </div>
+                <div class="col-2">
+                    @Html.RadioButtonFor(model => model.Formative.MultipleChoice.CorrectAnswer, SD.AnswerOptionA) Correct<br />
+                </div>
+
+                <br /><br />
+
+                <div class="col-2">
+                    @Html.Label("Answer Option " + SD.AnswerOptionB)
+                </div>
+                <div class="col-8">
+                    <input asp-for="@Model.Formative.MultipleChoice.AnswerB" class="form-control" />
+                </div>
+                <div class="col-2">
+                    @Html.RadioButtonFor(model => model.Formative.MultipleChoice.CorrectAnswer, SD.AnswerOptionB) Correct<br />
+                </div>
+                <br /><br />
+
+                <div class="col-2">
+                    @Html.Label("Answer Option " + SD.AnswerOptionC)
+                </div>
+                <div class="col-8">
+                    <input asp-for="@Model.Formative.MultipleChoice.AnswerC" class="form-control" />
+                </div>
+                <div class="col-2">
+                    @Html.RadioButtonFor(model => model.Formative.MultipleChoice.CorrectAnswer, SD.AnswerOptionC) Correct<br />
+                </div>
+                <br /><br />
+
+                <div class="col-2">
+                    @Html.Label("Answer Option " + SD.AnswerOptionD)
+                </div>
+                <div class="col-8">
+                    <input asp-for="@Model.Formative.MultipleChoice.AnswerD" class="form-control" />
+                </div>
+                <div class="col-2">
+                    @Html.RadioButtonFor(model => model.Formative.MultipleChoice.CorrectAnswer, SD.AnswerOptionD) Correct<br />
+                </div>
+                <span asp-validation-for="Formative.MultipleChoice" class="text-danger"></span>
+
+
+            </div>
+            <div id="TrueFalse" class="content form-group row" style="display: none; text-align:center">
+
+                <div class="col-2" style="text-align:left">
+                    @Html.Label("Question")
+                </div>
+                <div class="col-10" style="text-align:left">
+
+                    <P>Record the True or False Question Below:</P>
+                    @Html.TextAreaFor(m => m.Formative.TrueFalse.Question, htmlAttributes: new { id = "texta2", cols = "80", rows="5"  })
+                </div>
+
+                <div class="col-12" style="padding-top:20px; margin-top:0px"></div>
+
+
+                <div class="col-2" style="padding-left:15px;padding-right:15px">
+
+                    @Html.Label("Correct Answer")
+                </div>
+                <div class="col-10" style="text-align:left">
+                    <div class="col-5">
+                        @Html.RadioButtonFor(model => model.Formative.TrueFalse.CorrectAnswer, SD.AnswerOptionTrue) True
+                    </div>
+
+                    <div class="col-5">
+                        @Html.RadioButtonFor(model => model.Formative.TrueFalse.CorrectAnswer, SD.AnswerOptionFalse) False<br />
+                    </div>
+
+
+                </div>
+
+                <br /><br />
+
+
+
+
+
+                <span asp-validation-for="Formative.TrueFalse" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group row">
+                <div class="col-5 offset-3">
+                    <partial name="_CreateFAAndBackToListButton" model="@Model.CourseTopic.Id" />
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+</div>
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('.content').hide();
+            $(function () {
+
+                $('#ddlContentType').change(function () {
+                    $('.content').hide();
+                    $('#' + $(this).val()).show();                 
+                   
+
+                });
+
+            });
+                                         
+                       
+
+        });
+
+    </script>
+
+
+
+
+}

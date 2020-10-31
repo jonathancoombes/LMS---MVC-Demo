@@ -1,0 +1,110 @@
+﻿@using LMS.Extentions
+@using LMS.Utility
+@using LMS.Models.ViewModels
+@model AssessmentViewModel
+@{
+    ViewData["Title"] = "DirectList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var result = "";
+    var counter = 0;
+}
+
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-8">
+            <h2 class="text-info">Questioning Submissions Per Learner</h2>
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-6">
+                <p style="padding:5px"><strong>Course:</strong> @Model.ClassEnrolment.Class.Course.Name</p>
+            </div>
+            <div class="col-6">
+                <p style="padding:5px"><strong>Class:</strong> @Model.ClassEnrolment.Class.Name</p>
+            </div>
+        <div class="col-6 text-right">
+            
+        </div>
+    </div>
+
+    <br />
+    <div>
+        @if (Model.EnrolSubList.Count() > 0)
+        {
+            <table class="table table-striped border table-bordered table-responsive-sm">
+
+                <tr class="table-primary table-sm table-responsive-sm">
+                    <th style="width:1%">
+                        No
+                    </th>
+                    <th style="width:25%">
+                        Learner Name
+                    </th>
+                    <th style="width:25%">
+                        Learner Surname
+                    </th>
+                    <th style="width:13%;text-align:center">
+                        ID Number
+                    </th>
+                    <th style="width:10%;text-align:center">
+                        Actions
+                    </th>
+                    <th style="width:11%; text-align:center">
+                      Grading Status
+                    </th>
+
+
+                </tr>
+                @foreach (var item in Model.EnrolSubList)
+                {
+                    counter++;
+                    foreach (var sub in item.Value)
+                    {
+                        if (sub.GradePercentage == null) { result = "background:#faede6"; }
+                    }
+            <tr style="@result;" class="table-sm table-responsive-sm">
+                <td style="text-align:center">
+                    @counter
+                </td>
+                <td>
+                    @DisplayLimit.StringLength(item.Key.UserName, 55)
+                </td>
+                <td>
+                    @DisplayLimit.StringLength(item.Key.UserSurname, 55)
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(m => item.Key.Identity)
+
+                <td style="text-align:center" class="hover">
+                    <a asp-action="DirectSessions" asp-controller="Assessment" asp-route-learnerId="@item.Key.UserId" asp-route-enrolId="@item.Key.Id" class="btn btn-sm btn-warning text-white"><i class="fas fa-meh-rolling-eyes"></i>&nbsp; Edit Grade</a>
+                </td>
+                
+                    @if (result != "")
+                    {
+            <td style="text-align:center;padding:4px" class="bg-gradient-warning">
+                <p class="bg-gradient-warning text-dark" style="font-weight:600"><i class="fas fa-exclamation-triangle "></i>&nbsp; Incomplete</p>
+            </td>
+                        }
+                        else
+                        {
+                    <td style="text-align:center" class="bg-gradient-success">
+                        <p class="bg-gradient-success text-dark"><i class="far fa-grin"></i>&nbsp; Complete</p>
+                    </td>
+                        }
+                  
+
+                </tr>
+                }
+
+            </table>
+        }
+        else
+        {
+    <h3 class="text-sm-left">There's no Direct Question Submissions available at this stage.</h3>
+        }
+    </div>
+
+</div>

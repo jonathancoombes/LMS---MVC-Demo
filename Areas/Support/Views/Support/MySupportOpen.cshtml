@@ -1,0 +1,114 @@
+﻿@using LMS.Models.ViewModels
+@using LMS.Utility
+@using LMS.Extentions
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@model SupportViewModel
+@{
+    ViewData["Title"] = "Open Support Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var user = await UserManager.GetUserAsync(User);
+}
+
+
+<br />
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">My Open Support Requests</h2>
+        </div>
+        @if (user.ActiveClassId != null)
+        {<div class="col-6 text-right">
+                <a class="btn btn-success text-white" asp-controller="Support" asp-action="SubmitRequest">
+                    <i class="fas fa-external-link-alt"></i> &nbsp; New Request
+                </a>
+                <a class="btn btn-warning text-white" asp-controller="Support" asp-action="MySupportClosed" asp-route-Id="@Model.ClassId">
+                    <i class="fas fa-envelope"></i> &nbsp; Closed Requests
+                </a>
+            </div>}
+    </div>
+
+    <br />
+    <div>
+        @if (Model.SupportRequestList.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tr class="table-secondary">
+                    <th style="width:60%">
+                        @Html.DisplayNameFor(m => m.SupportRequest.RequestHeading)
+                    </th>
+                    <th style="width:21%; text-align:center">
+                        @Html.DisplayNameFor(m => m.SupportRequest.Open)
+                    </th>
+                    <th style="width:4%;text-align:center">
+                        @Html.DisplayNameFor(m => m.SupportRequest.Status)
+                    </th>
+                    <th style="width:4%;text-align:center">
+                        @Html.DisplayNameFor(m => m.SupportRequest.ResponseIds)
+                    </th>
+
+                    <th style="width:15%; text-align:center">View</th>
+
+                </tr>
+                @foreach (var item in Model.SupportRequestList)
+                {
+                    if (item.Status != SD.StatusClosed)
+                    {
+                        <tr>
+                            <td>
+                                @DisplayLimit.StringLength(item.RequestHeading, 55)
+                            </td>
+
+                            <td style="text-align:center">
+                                @Html.DisplayFor(m => item.Open)
+                            </td>
+                            <td style="text-align:center">
+                                @Html.DisplayFor(m => item.Status)
+                            </td>
+
+
+                            @if (item.ResponseIds != "" && item.ResponseIds != null)
+                            {
+                                <td style="text-align:center">
+                                    <p style="color:teal; font-weight:bold">
+                                        @OrderList.ItemIdOrder(item.ResponseIds).Count()
+                                    </p>
+
+                                </td>
+                                <td style="text-align:center">
+
+                                    <a asp-action="ViewRequest" asp-controller="Support" asp-route-id="@item.Id" class="btn btn-primary text-white"><i class="fas fa-envelope-open"></i> Open</a>
+
+                                </td>
+                            }
+                            else
+                            {
+                                <td style="text-align:center">
+                                    <p style="color: #246596; font-weight:bold">None</p>
+                                </td>
+                                <td style="text-align:center">
+                                    <a asp-action="ViewRequest" asp-controller="Support" asp-route-id="@item.Id" class="btn btn-info text-white"><i class="fas fa-envelope"></i> Open</a>
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                }
+
+            </table>
+        }
+        else
+        {
+            <h3>No Support Requests Exists</h3>
+        }
+    </div>
+
+</div>
+
+
+

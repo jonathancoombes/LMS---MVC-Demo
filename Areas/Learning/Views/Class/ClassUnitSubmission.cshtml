@@ -1,0 +1,180 @@
+﻿@using static LMS.Extentions.OrderList
+@model LMS.Models.ViewModels.CourseUnitViewModel
+@{
+    ViewData["Title"] = "UnitList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<int> added = new List<int>();
+}
+
+<br />
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-8">
+            <h2 class="text-info">@Model.Course.Name</h2>
+            <br />
+            <h4 class="text-info text-black-50">Assignments and Projects Per Unit</h4>
+        </div>
+
+    </div>
+
+    <br />
+
+  
+    <div>
+
+        @if (Model.UnitValidityPairs.Count() > 0)
+        {
+        <form method="post" id="infos" asp-controller="Class" enctype="application/x-www-form-urlencoded" asp-action="Update">
+
+            <table class="table table-striped border">
+
+                <tbody>
+                    @if (Model.CourseUnitList.Count() > 0)
+                    {
+
+                        @foreach (var module in Model.CourseModuleList)
+                        {
+                        <thead>
+
+                            <tr class="table-success table-sm text-capitalize">
+                                <td colspan="7" cellpadding="2" style="text-transform:uppercase">
+                                    MODULE: @Html.DisplayFor(m => module.Title)
+                                </td>
+                            </tr>
+
+                        </thead>
+                        @foreach (var pair in Model.UnitValidityPairs)
+                        {
+
+                            @foreach (var unit in Model.CourseUnitList)
+                            {
+
+                                @if (unit.SAOrder != null && unit.SAOrder != "")
+                                {
+
+
+                                    if (pair.Key == unit.Id && ItemIdOrder(module.CourseUnitOrder).Contains(pair.Key))
+                                    {
+                                        @if (module.CourseUnitOrder != null && module.CourseUnitOrder != "" && Model.ModsWithVals.Contains(module.Id))
+                                        {
+
+
+
+
+
+                                            <thead class="table-dark">
+                                                <tr class="table-sm thead-dark">
+
+                                                    <td colspan="7" cellpadding="0">
+                                                        @{
+                                                            if (unit.Name.Length < 55)
+                                                            {
+                                                                var result = "Unit: " + unit.Name;
+                                                                @result;
+                                                            }
+                                                            else if (unit.Name.Length > 55)
+                                                            {
+                                                                var unitTitle = "Unit: " + unit.Name.Substring(0, 55) + "....";
+                                                                @unitTitle;
+                                                            }
+                                                        }
+
+                                                    </td>
+
+
+
+
+                                                </tr>
+                                            </thead>
+                                            <thead class="table-striped">
+                                                <tr>
+                                                    <th style="width:43%">Summative Title</th>
+                                                    <th style="text-align:center; width:13%">Type</th>
+
+                                                    <th style="text-align:center; width:22%">Open Date</th>
+                                                    <th style="text-align:center; width:22%">Close Date</th>
+                                                    <th style="text-align:center; width:10%">Actions</th>
+
+                                                </tr>
+                                            </thead>
+                                        }
+
+
+
+
+
+                                        foreach (var item in pair.Value)
+                                        {
+
+
+
+                                            @if (unit.SAOrder != null && unit.SAOrder != "")
+                                            {
+                                                @if (ItemIdOrder(unit.SAOrder).Contains(item.SummativeId))
+                                                {
+
+
+                                                    if (!added.Contains(item.Id))
+                                                    {
+
+
+
+                                                        <tr class="table-striped table-sm " id="re">
+
+                                                            <td>
+                                                                @Html.DisplayFor(m => item.Summative.Title)
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(m => item.Summative.AssessmentType)
+
+                                                            </td>
+
+                                                            <td>
+                                                                @Html.DisplayFor(m => item.Open)
+
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(m => item.Close)
+
+                                                            </td>
+                                                            <td>
+                                                                <button id="btn" asp-route-valId="@item.Id" asp-action="DateValidation" asp-controller="Class" class="btn btn-sm btn-success text-white" style=""><i class="fas fa-arrow-right"></i> &nbsp;EDIT</button>
+
+                                                            </td>
+
+                                                        </tr>
+
+                                                        added.Add(item.Id);
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    }
+
+                </table> 
+            </form>
+
+            }
+
+    </div>
+</div>
+
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+  
+  
+}

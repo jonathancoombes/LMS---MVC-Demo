@@ -1,0 +1,242 @@
+﻿@using LMS.Support
+@using LMS.Utility
+@using LMS.Models.Course
+@model CourseTopic
+
+@{
+    ViewData["Title"] = "TopicViewer";
+
+}
+
+    <div id="toolbar" class="row text-center container-fluid col-xl-12 backgroundWhite" style="width: 100%;font-size:0.9em">
+        <input type="hidden" id="pdfUrl" data-url="@Model.PDFContent" />
+        <input type="hidden" id="cType" data-type="@Model.ContentType" />
+        <input type="hidden" id="currentTopic" data-ctopic="@ViewBag.topic" />
+        <input type="hidden" id="completed" data-completed="@ViewBag.completed" />
+        <input type="hidden" id="viewingTopic" data-vtopic="@Model.Id" />
+
+        <div class="row " style="max-height:50px;margin:0 auto;padding-top:10px; padding-bottom:20px">
+            <div id="back">
+                <button class="btn btn-warning text-white" id="back" onclick="location.href='@Url.Action("ContentOutline", "CourseOutline")';return false;">
+                    <i class="fas fa-arrow-left"></i> Go Back
+                </button>
+            </div>
+            @if (Model.ContentType == SD.ContentPDF)
+            {
+                <div id="prevb">
+                    <button class="btn btn-info text-white " id="prev" data-pager="prev"><i class="far fa-caret-square-left"></i> &nbsp;prev</button>
+
+                </div>
+                <div class="showHide" id="page-mode" style="text-align:center;">
+                    <div id="page-count-container showHide" style="padding-top:7px">Page <p class="showHide" style="display:inline" id="pdf-current-page"></p> of <p class="showHide" style="display:inline" id="pdf-total-pages"></p></div>
+                </div>
+                <div id="nextb">
+
+                    <button class="btn btn-info text-white" id="next" data-pager="next"> <i class="far fa-caret-square-right"></i> &nbsp;next</button>
+                </div>}
+
+
+            @*<span class="switch showHide" style="max-width:160px; padding-left:3%">
+                <input type="checkbox" class="switch" id="switch-normal">
+                <label for="switch-normal">Dim</label>
+            </span>*@
+        </div>
+
+        @if (Model.ContentType == SD.ContentPDF)
+        {
+            //We handle the pdf content
+            <div id="notice" style="display:none;background:#aa3f34; color:#e5e4e4; margin:0 auto;width:91%"> Note: Your progress is not being tracked here.  Visit the Classroom to complete this topic and save your progress. </div>
+            <div style="background:#869eb4; color:#fafafa; margin:0 auto;width:91%"> @Model.Name (Unit: @Model.CourseUnit.Name)</div>
+            <div class="col-sm-12 container-fluid" id="the-container">
+                <div style="padding-top:65px;" id="pdf-loader">Loading Content ...</div><canvas id="the-canvas" style=""></canvas>
+            </div>}
+        else
+        {
+            //We handle the HTML content
+            <div style="margin-bottom:65px;"></div>
+            <div id="notice" style="display:none;background:#aa3f34; color:#e5e4e4; margin:0 auto;width:97.2%"> Note: Your progress is not being tracked here.  Visit the Classroom to complete this topic and save your progress. </div>
+            <div style="background:#869eb4; color:#fafafa; text-transform:uppercase; margin:0 auto;width:97.2%"><i class="fas fa-arrow-right"> </i>TOPIC:  @Model.Name   </div>
+            <div class="col-sm-12 container-fluid" id="the-containerHtml">
+                <div id="the-canvas2" style="margin-bottom:20px; margin-left:0px; margin-right:0px;  padding-top:0px; border: 1px solid #aeabab;background:#fafafa">
+
+
+                    @Html.Raw(Model.CustomContent)
+                </div>
+
+            </div>
+        }
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@section Scripts{
+    <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+          rel="stylesheet">
+
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+
+    <script src="~/js/pdf.js"></script>
+    <script src="~/js/pdf.worker.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var ctopic = $("#currentTopic").data("ctopic");
+            var vtopic = $("#viewingTopic").data("vtopic");
+            var completed = $("#completed").data("completed");
+
+            if (ctopic === vtopic && completed != @SD.AllComplete) {
+                $("#notice").show();
+            }
+
+      $('#switch-normal').on('click',function(){
+          $('.search-background').toggleClass('lights-off').fadeOut;
+          $('#prev, #back, #next, #complete, #formative').toggleClass('buttonDark');
+          $('#toolbar').toggleClass('toolbarDark');
+
+            });
+            })
+
+
+
+        var page_no = 1;
+
+         var __PDF_DOC,
+	                __CURRENT_PAGE,
+	                __TOTAL_PAGES,
+	                __PAGE_RENDERING_IN_PROGRESS = 0,
+	                __CANVAS = $('#the-canvas').get(0),
+	                __CANVAS_CTX = __CANVAS.getContext('2d');
+
+
+        var pdf_url = $("#pdfUrl").data("url");
+
+               //Getting the Page number from DB to display
+
+
+	            pdfjsLib.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+		        __PDF_DOC = pdf_doc;
+		        __TOTAL_PAGES = __PDF_DOC.numPages;
+
+		        // Hide the pdf loader and show pdf container in HTML
+		        $("#pdf-loader").hide();
+		        $("#pdf-contents").show();
+		        $("#pdf-total-pages").text(__TOTAL_PAGES);
+
+		        // Show the first page
+		        showPage(page_no);
+	        }).catch(function(error) {
+		        // If error re-show the upload button
+		        $("#pdf-loader").hide();
+
+	        });
+
+
+
+                function showPage(page_no) {
+	                __PAGE_RENDERING_IN_PROGRESS = 1;
+	                __CURRENT_PAGE = page_no;
+
+	                // Disable Prev & Next buttons while page is being loaded
+	                $("#next, #prev").attr('disabled', 'disabled');
+
+	                // While page is being rendered hide the canvas and show a loading message
+	                $("#the-canvas").hide();
+	                $("#page-loader").show();
+
+	                // Update current page in HTML
+	                $("#pdf-current-page").text(page_no);
+
+	            // Fetch the page
+	            __PDF_DOC.getPage(page_no).then(function(page) {
+		            // As the canvas is of a fixed width we need to set the scale of the viewport accordingly
+
+                    var container = document.getElementById('the-container');
+
+                    var viewport = page.getViewport(1.1);
+
+                    var scale_required = container.clientWidth / viewport.width;
+
+		            // Get viewport of the page at required scale
+		            viewport = page.getViewport(scale_required);
+
+		            // Set canvas height
+		            __CANVAS.height = viewport.height;
+                    __CANVAS.width = viewport.width;
+		            var renderContext = {
+			            canvasContext: __CANVAS_CTX,
+			            viewport: viewport
+		            };
+
+		            // Render the page contents in the canvas
+		            page.render(renderContext).then(function() {
+			            __PAGE_RENDERING_IN_PROGRESS = 0;
+
+			            // Re-enable Prev & Next buttons
+			            $("#next, #prev").removeAttr('disabled');
+
+			            // Show the canvas and hide the page loader
+			            $("#the-canvas").show();
+			            $("#page-loader").hide();
+		            });
+	            });
+            }
+
+            var newp = 0;
+
+            $("#next").on("click", function () {
+
+                if (__CURRENT_PAGE != __TOTAL_PAGES)
+                     newp = ++__CURRENT_PAGE;
+		            showPage(__CURRENT_PAGE);
+
+
+         });
+
+             $("#prev").on("click", function () {
+
+                if (__CURRENT_PAGE != 1)
+                    newp = --__CURRENT_PAGE;
+		            showPage(__CURRENT_PAGE);
+
+         });
+
+
+             window.onresize = function () {
+
+                 location.reload();
+             }
+
+            //Serializes the object for use in js
+            var pirates = @JavaScriptConvert.SerializeObject(1);
+
+
+
+    </script>
+
+
+
+
+
+}
+

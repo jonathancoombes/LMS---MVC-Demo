@@ -1,0 +1,107 @@
+﻿@using LMS.Extentions
+@model LMS.Models.ViewModels.ClassEnrolmentViewModel
+@{
+    ViewData["Title"] = "LearnerClasses";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+
+}
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info">My Class List</h2> 
+        </div>
+       
+    </div>
+    <br />
+    <div>
+        @if (Model.ClassEnrolments.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tr class="table-secondary">
+                    <th style="width:22%">
+                        Course @Html.DisplayNameFor(m => m.ClassEnrolment.Class.Course.Name)
+                    </th>
+                    <th style="width:18%">
+                        Class @Html.DisplayNameFor(m => m.ClassEnrolment.Class.Name)
+                    </th>
+
+                    <th style="width:11%;text-align:center">
+                        @Html.DisplayNameFor(m => m.ClassEnrolment.Class.StartDate) Date
+                    </th>
+                    <th style="width:11%;text-align:center">
+                        @Html.DisplayNameFor(m => m.ClassEnrolment.Class.EndDate) Date
+                    </th>
+                    <th style="width:13%;text-align:center">
+                        @Html.DisplayNameFor(m => m.ClassEnrolment.EnrolmentDate)
+                    </th>
+                    <th style="width:6%; text-align:center">Select</th>
+
+                </tr>
+                @foreach (var item in Model.ClassEnrolments)
+                {
+
+                    <tr>
+                        <td>
+                            @DisplayLimit.StringLength(item.Class.Course.Name, 61)
+                        </td>
+                        <td>
+                            @DisplayLimit.StringLength(item.Class.Name, 48)
+                        </td>
+
+                        <td style="text-align:center">
+                            @Html.DisplayFor(m => item.Class.StartDate)
+                        </td>
+                        <td style="text-align:center">
+                            @Html.DisplayFor(m => item.Class.EndDate)
+                        </td>
+                        <td style="text-align:center">
+                            @Html.DisplayFor(m => item.EnrolmentDate)
+                        </td>
+
+                        <td style="text-align:center">
+                            @if (Model.User.ActiveClassId == item.Id)
+                            {
+                                <a class="btn btn-md btn-success text-white" asp-route-id="@item.Id">
+                                    <i class="fas fa-graduation-cap"></i> Active
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-md btn-primary" asp-action="Activate" asp-route-id="@item.Id">
+                                    <i class="fas fa-pause"></i> Paused
+                                </a>
+                            }
+
+                        </td>
+
+
+                    </tr>
+                }
+
+            </table><p style="padding-left:20px; padding-right:20px; margin:0;color:#808080; font-size:smaller">
+    <b>Getting Started Guide: </b>Welcome to your Class Page. Here you will find a list of the classes that you are currently enrolled in. You could be enrolled into many courses
+    at the same time, however you can only study one at a time. Select the course you want to study from the list. You can change your selection at any time.
+</p>
+        }
+        else
+        {
+            <h3>You have not yet been enrolled into a Class yet.</h3>
+        }
+    </div>
+
+</div>
+
+
+

@@ -1,0 +1,71 @@
+﻿@using LMS.Models.Course
+@model IEnumerable<Course>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br /><br />
+
+<div class="border backgroundWhite">
+
+    <div class="row">
+        <div class="col-8">
+            <h2 class="text-info">Select Course to Manage Content</h2>
+             </div>
+   
+    </div>
+
+    <br />
+    <div>
+        @if (Model.Count() > 0)
+        {
+            <table class="table table-striped border">
+
+                <tr class="table-secondary">
+                    <th>
+                       Course Name
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.Reference)
+                    </th>
+                    <th></th>
+                    <th>Manage Content</th>
+
+
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(m => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Reference)
+                        </td>
+                        <td>
+                            @if (item.CourseModuleOrder == null || item.CourseModuleOrder == "")
+                            {
+                                <partial name="_UnitCourseIndexTableButtonInactivePartial" model="item.Id"/>
+                               
+                            }
+                            else
+                            {
+                                <partial name="_UnitCourseIndexTableButtonPartial" model="item.Id" />
+                            }
+
+
+
+
+                        </td>
+                    </tr>}
+            </table>
+        }
+        else
+        {
+            <h3>No Units Exists</h3>
+        }
+    </div>
+
+</div>
+

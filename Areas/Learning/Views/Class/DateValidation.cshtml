@@ -1,0 +1,83 @@
+﻿@using LMS.Models.ViewModels
+@model SubmissionValidity
+@{
+    ViewData["Title"] = "DateValidation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="border backgroundWhite">
+
+    <div class="col-12" style="margin:0 auto">
+
+        <h4 class="text-info text-black-50">Summative Submission Validity Schedule</h4>
+        <p>Kindly adjust an save the desired validity date for the specific Summative Submission below.</p>
+
+
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <form style="margin:0 auto" asp-action="Update" asp-controller="Class" method="post">
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Summative.Title" class="col-form-label"></label>
+                </div>
+                <div class="col-4">
+                    @Html.DisplayFor(model => model.Summative.Title)
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Summative.AssessmentType" class="col-form-label"></label>
+                </div>
+                <div class="col-4">
+                    @Html.DisplayFor(model => model.Summative.AssessmentType)
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Open" class="col-form-label"></label>
+                </div>
+                <div class="col-4">
+                    @Html.EditorFor(model => model.Open, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                </div>   <span asp-validation-for="@Model.Open" class="text-danger"></span>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-2">
+                    <label asp-for="@Model.Close" class="col-form-label"></label>
+                </div>
+                <div class="col-4">
+            @Html.EditorFor(model => model.Close, "{dddd, dd MMMM yyyy HH:mm:ss}", new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+        </div>   <span asp-validation-for="@Model.Close" class="text-danger"></span>
+                
+
+            </div>
+
+
+            <input type="hidden" id="valId" name="valId" asp-for="@Model.Id">
+
+          
+            <div class="form-group row" style="margin:0 auto;">
+                <div class="col-2 offset-2" style="margin:0 auto;">
+                    <input type="submit" class="btn btn-success form-control" style="max-width:160px;margin:0 auto" value="Submit Changes" />
+                </div>
+                <div class="col-10" style="margin:0 auto; ">
+                    @Html.ActionLink("Cancel", "ClassUnitSubmission", "Class", new { classId = @Model.ClassId, courseId = Model.Class.CourseId }, new { @class = "btn btn-danger" })
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");
+             
+
+        }
+
+   
+}

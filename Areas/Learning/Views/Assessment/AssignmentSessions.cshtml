@@ -1,0 +1,153 @@
+﻿@using LMS.Extentions
+@using LMS.Utility
+@using LMS.Models.ViewModels
+@model AssessmentViewModel
+@{
+    ViewData["Title"] = "AssignmentSessions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var result = "";
+    var counter = 0;
+    var unitList = new List<int>();
+}
+
+<br />
+
+<div class="border backgroundWhite">
+
+    <div class="row" style="padding-bottom:10px">
+        <div class="col-6">
+            <h2 class="text-info">Assignment Sessions per Unit</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 ">
+
+            <table style="opacity: 1" class="table table-sm table-striped table-responsive-sm">
+                <thead>
+                    <tr class="table-secondary table-sm text-dark table-responsive-sm text-center" style="box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1), 0 0px 0px 0 rgba(0, 0, 0, 0.19);">
+                        <th style="font-weight:600;color:lightslategray">
+                            Name
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Surname
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Identity
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Course
+                        </th>
+                        <th style="font-weight:600;color:lightslategray">
+                            Class
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center">
+                        <td>
+                            @Model.FirstName
+                        </td>
+                        <td>
+                            @Model.LastName
+                        </td>
+                        <td>
+                            @Model.IdNumber
+                        </td>
+
+                        <td>
+                            @Model.ClassEnrolment.Class.Course.Name
+                        </td>
+                        <td>
+                            @Model.ClassEnrolment.Class.Name
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <div>
+        @if (Model.SessionSubList.Count() > 0)
+        {
+        <table class="table table-striped border table-bordered table-responsive-sm">
+
+            <tr class="table-primary table-sm table-responsive-sm">
+                <th style="width:1%;text-align:center">
+                    No
+                </th>
+                <th style="width:35%">
+                    Unit Name
+                </th>
+                <th style="width:1%">
+                    Assignments
+                </th>
+                <th style="width:7%;text-align:center">
+                    Grade Average
+                </th>
+                <th style="width:7%; text-align:center">
+                    Actions
+                </th>
+
+            </tr>
+
+            @foreach (var unit in Model.UnitList)            {
+             
+
+                @foreach (var sesSubList in Model.SessionSubList.Values)
+                {
+
+                    int? grade = 0;
+
+                    foreach (var sub in sesSubList)
+                    { 
+                        if ((!unitList.Contains(unit.Id)) && unit.SAOrder != null && unit.SAOrder != "" && OrderList.ItemIdOrder(unit.SAOrder).Contains(sub.SummativeId))
+                        {
+                            counter++;
+                            unitList.Add(unit.Id);                          
+
+                            <tr style="@result;" class="table-sm table-responsive-sm">
+                                <td style="text-align:center">
+                                    @counter
+                                </td>
+                                <td>
+                                    @if (unit.Id == sub.Summative.CourseUnitId)
+                                    {
+                                        @DisplayLimit.StringLength(unit.Name, 55)
+                                    }
+                                </td>
+                                <td style="text-align:center">
+                                    @sesSubList.Where(p => p.Summative.CourseUnitId == unit.Id).Count()
+
+                                </td>
+                                <td style="text-align:center">
+                          
+                                    @(grade / sesSubList.Where(p => p.Summative.CourseUnitId == unit.Id).Count()) %
+
+                                </td>
+
+                                <td style="text-align:center">
+
+                                    <a asp-action="EditGradeAssignment" asp-controller="Assessment" asp-route-sessionId="@sub.SummativeSessionId" class="btn btn-sm btn-danger text-white"><i class="fas fa-edit"></i>&nbsp; Edit Grade</a>
+
+                                </td>
+
+                            </tr>
+
+                        }
+                    }
+                }}
+
+
+        </table>
+            }
+                else
+                {
+                <h3 class="text-sm-left">There's no Assignment Sessions available at this stage.</h3>
+                }
+            </div>
+
+        </div>

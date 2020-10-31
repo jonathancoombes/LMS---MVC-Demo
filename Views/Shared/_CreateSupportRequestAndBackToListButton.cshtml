@@ -1,0 +1,10 @@
+﻿@using LMS.Models.ViewModels
+@model SupportViewModel
+<div class="row">
+    <div class="col-6">
+        <input type="submit" class="btn btn-info form-control" value="Submit Request" />
+    </div>
+    <div class="col-6">
+        <a asp-action="MySupport" asp-route-id="@Model.SupportRequest.ClassId" class="btn btn-success form-control">Back to List</a>
+    </div>
+</div>
